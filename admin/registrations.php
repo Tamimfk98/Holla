@@ -117,7 +117,7 @@ if ($action === 'list') {
         JOIN users u ON tr.user_id = u.id
         JOIN tournaments t ON tr.tournament_id = t.id
         LEFT JOIN payments p ON tr.id = p.registration_id
-        $whereClause
+        " . $whereClause . "
         ORDER BY tr.created_at DESC
     ");
     $stmt->execute($params);
