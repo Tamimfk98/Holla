@@ -8,11 +8,17 @@
             <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'tournaments.php' ? 'active' : '' ?>" href="tournaments.php">
                 <i class="fas fa-trophy"></i> Tournaments
             </a>
+            <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'registrations.php' ? 'active' : '' ?>" href="registrations.php">
+                <i class="fas fa-user-check"></i> Registrations
+            </a>
             <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'users.php' ? 'active' : '' ?>" href="users.php">
                 <i class="fas fa-users"></i> Users
             </a>
             <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'matches.php' ? 'active' : '' ?>" href="matches.php">
                 <i class="fas fa-gamepad"></i> Matches
+            </a>
+            <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'results.php' ? 'active' : '' ?>" href="results.php">
+                <i class="fas fa-trophy-star"></i> Results
             </a>
             <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'payments.php' ? 'active' : '' ?>" href="payments.php">
                 <i class="fas fa-credit-card"></i> Payments

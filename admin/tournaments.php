@@ -24,6 +24,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $startDate = $_POST['start_date'] ?? '';
                 $endDate = $_POST['end_date'] ?? '';
                 $status = sanitizeInput($_POST['status'] ?? 'upcoming');
+                $thumbnailPath = '';
+                
+                // Handle thumbnail upload
+                if (isset($_FILES['thumbnail']) && $_FILES['thumbnail']['error'] === UPLOAD_ERR_OK) {
+                    $uploadDir = '../assets/images/tournaments/';
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0755, true);
+                    }
+                    
+                    $fileInfo = pathinfo($_FILES['thumbnail']['name']);
+                    $fileName = 'tournament_' . time() . '_' . uniqid() . '.' . $fileInfo['extension'];
+                    $uploadPath = $uploadDir . $fileName;
+                    $thumbnailPath = 'assets/images/tournaments/' . $fileName;
+                    
+                    // Validate file
+                    $allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                    if (in_array(strtolower($fileInfo['extension']), $allowedTypes) && $_FILES['thumbnail']['size'] <= 5242880) {
+                        if (move_uploaded_file($_FILES['thumbnail']['tmp_name'], $uploadPath)) {
+                            // File uploaded successfully
+                        } else {
+                            $error = 'Failed to upload thumbnail';
+                        }
+                    } else {
+                        $error = 'Invalid file type or size too large (max 5MB)';
+                    }
+                }
                 
                 if (empty($name) || empty($gameType) || $maxTeams <= 0) {
                     $error = 'Please fill all required fields';
@@ -32,19 +58,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($action === 'create') {
                             $stmt = $pdo->prepare("
                                 INSERT INTO tournaments (name, description, game_type, max_teams, 
-                                                       entry_fee, prize_pool, start_date, end_date, status, created_at)
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+                                                       entry_fee, prize_pool, start_date, end_date, status, thumbnail, created_at)
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
                             ");
-                            $stmt->execute([$name, $description, $gameType, $maxTeams, $entryFee, $prizePool, $startDate, $endDate, $status]);
+                            $stmt->execute([$name, $description, $gameType, $maxTeams, $entryFee, $prizePool, $startDate, $endDate, $status, $thumbnailPath]);
                             $success = 'Tournament created successfully';
                         } else {
-                            $stmt = $pdo->prepare("
-                                UPDATE tournaments 
-                                SET name = ?, description = ?, game_type = ?, max_teams = ?, 
-                                    entry_fee = ?, prize_pool = ?, start_date = ?, end_date = ?, status = ?
-                                WHERE id = ?
-                            ");
-                            $stmt->execute([$name, $description, $gameType, $maxTeams, $entryFee, $prizePool, $startDate, $endDate, $status, $tournamentId]);
+                            if ($thumbnailPath) {
+                                $stmt = $pdo->prepare("
+                                    UPDATE tournaments 
+                                    SET name = ?, description = ?, game_type = ?, max_teams = ?, 
+                                        entry_fee = ?, prize_pool = ?, start_date = ?, end_date = ?, status = ?, thumbnail = ?
+                                    WHERE id = ?
+                                ");
+                                $stmt->execute([$name, $description, $gameType, $maxTeams, $entryFee, $prizePool, $startDate, $endDate, $status, $thumbnailPath, $tournamentId]);
+                            } else {
+                                $stmt = $pdo->prepare("
+                                    UPDATE tournaments 
+                                    SET name = ?, description = ?, game_type = ?, max_teams = ?, 
+                                        entry_fee = ?, prize_pool = ?, start_date = ?, end_date = ?, status = ?
+                                    WHERE id = ?
+                                ");
+                                $stmt->execute([$name, $description, $gameType, $maxTeams, $entryFee, $prizePool, $startDate, $endDate, $status, $tournamentId]);
+                            }
                             $success = 'Tournament updated successfully';
                         }
                         $action = 'list';
@@ -218,7 +254,7 @@ if ($flash) {
                 <?php elseif ($action === 'create' || $action === 'edit'): ?>
                     <!-- Tournament Form -->
                     <div class="gaming-card">
-                        <form method="POST">
+                        <form method="POST" enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                             
                             <div class="row">
@@ -244,6 +280,20 @@ if ($flash) {
                             <div class="mb-3">
                                 <label for="description" class="form-label text-light">Description</label>
                                 <textarea class="form-control gaming-input" id="description" name="description" rows="4"><?= htmlspecialchars($tournament['description'] ?? '') ?></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="thumbnail" class="form-label text-light">Tournament Thumbnail</label>
+                                <?php if (!empty($tournament['thumbnail'])): ?>
+                                    <div class="mb-2">
+                                        <img src="../<?= htmlspecialchars($tournament['thumbnail']) ?>" alt="Current thumbnail" 
+                                             class="img-thumbnail" style="max-height: 100px;">
+                                        <p class="text-light-50 small mb-0">Current thumbnail</p>
+                                    </div>
+                                <?php endif; ?>
+                                <input type="file" class="form-control gaming-input" id="thumbnail" name="thumbnail" 
+                                       accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
+                                <div class="form-text text-light-50">Upload an image for the tournament (max 5MB). Supported formats: JPG, PNG, GIF, WebP</div>
                             </div>
                             
                             <div class="row">

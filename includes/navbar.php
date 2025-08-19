@@ -19,6 +19,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="registrations.php">
+                        <i class="fas fa-user-check"></i> Registrations
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="users.php">
                         <i class="fas fa-users"></i> Users
                     </a>
@@ -26,6 +31,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="matches.php">
                         <i class="fas fa-gamepad"></i> Matches
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="results.php">
+                        <i class="fas fa-trophy-star"></i> Results
                     </a>
                 </li>
                 <li class="nav-item">
