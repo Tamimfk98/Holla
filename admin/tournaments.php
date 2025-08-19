@@ -201,6 +201,7 @@ if ($flash) {
                                 <table class="table table-dark table-hover">
                                     <thead>
                                         <tr>
+                                            <th>Thumbnail</th>
                                             <th>Name</th>
                                             <th>Game</th>
                                             <th>Teams</th>
@@ -213,6 +214,14 @@ if ($flash) {
                                     <tbody>
                                         <?php foreach ($tournaments as $t): ?>
                                             <tr>
+                                                <td>
+                                                    <?php if (!empty($t['thumbnail'])): ?>
+                                                        <img src="../<?= htmlspecialchars($t['thumbnail']) ?>" alt="Tournament thumbnail" 
+                                                             class="img-thumbnail" style="max-width: 60px; max-height: 40px; object-fit: cover;">
+                                                    <?php else: ?>
+                                                        <span class="text-light-50"><i class="fas fa-image"></i> No image</span>
+                                                    <?php endif; ?>
+                                                </td>
                                                 <td>
                                                     <strong><?= htmlspecialchars($t['name']) ?></strong>
                                                     <br><small class="text-light-50"><?= formatDate($t['start_date']) ?></small>

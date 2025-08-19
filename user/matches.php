@@ -366,7 +366,13 @@ if ($flash) {
                                                 <div class="col">
                                                     <button class="btn btn-warning w-100" type="button" data-bs-toggle="collapse" 
                                                             data-bs-target="#uploadForm<?= $match['id'] ?>" aria-expanded="false">
-                                                        <i class="fas fa-upload"></i> Upload
+                                                        <i class="fas fa-upload"></i> Upload Screenshot
+                                                    </button>
+                                                </div>
+                                            <?php else: ?>
+                                                <div class="col">
+                                                    <button class="btn btn-success w-100" disabled>
+                                                        <i class="fas fa-check"></i> Screenshot Uploaded
                                                     </button>
                                                 </div>
                                             <?php endif; ?>
@@ -504,7 +510,7 @@ if ($flash) {
                                         <i class="fas fa-check-circle"></i> Uploaded
                                         <br><small>on <?= formatDate($match['team1_upload_time']) ?></small>
                                     </div>
-                                    <a href="../uploads/screenshots/<?= $match['team1_screenshot'] ?>" 
+                                    <a href="../<?= htmlspecialchars($match['team1_screenshot']) ?>" 
                                        target="_blank" class="btn btn-sm btn-outline-success">
                                         <i class="fas fa-eye"></i> View Screenshot
                                     </a>
@@ -522,7 +528,7 @@ if ($flash) {
                                         <i class="fas fa-check-circle"></i> Uploaded
                                         <br><small>on <?= formatDate($match['team2_upload_time']) ?></small>
                                     </div>
-                                    <a href="../uploads/screenshots/<?= $match['team2_screenshot'] ?>" 
+                                    <a href="../<?= htmlspecialchars($match['team2_screenshot']) ?>" 
                                        target="_blank" class="btn btn-sm btn-outline-success">
                                         <i class="fas fa-eye"></i> View Screenshot
                                     </a>
@@ -534,14 +540,41 @@ if ($flash) {
                             </div>
                         </div>
                         
-                        <!-- Actions -->
+                        <!-- Screenshot Upload Form -->
                         <?php if ($match['status'] !== 'scheduled' && $match['status'] !== 'completed'): ?>
                             <?php 
                             $userScreenshot = ($match['team1_id'] == $userId) ? $match['team1_screenshot'] : $match['team2_screenshot'];
                             if (!$userScreenshot): ?>
-                                <a href="upload.php?match_id=<?= $match['id'] ?>" class="btn btn-warning w-100">
-                                    <i class="fas fa-upload"></i> Upload Your Screenshot
-                                </a>
+                                <div class="gaming-card">
+                                    <h5 class="text-warning mb-3">
+                                        <i class="fas fa-upload"></i> Upload Your Screenshot
+                                    </h5>
+                                    <form method="POST" enctype="multipart/form-data" class="upload-form">
+                                        <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+                                        <input type="hidden" name="match_id" value="<?= $match['id'] ?>">
+                                        
+                                        <div class="mb-3">
+                                            <label class="form-label text-light">
+                                                <i class="fas fa-image text-accent"></i> Match Result Screenshot
+                                            </label>
+                                            <input type="file" class="form-control gaming-input" 
+                                                   name="screenshot" accept="image/*" required>
+                                            <div class="form-text text-light-50">
+                                                Upload a clear screenshot showing your match results (Max 5MB)
+                                            </div>
+                                        </div>
+                                        
+                                        <button type="submit" name="upload_screenshot" class="btn btn-warning w-100">
+                                            <i class="fas fa-cloud-upload-alt"></i> Upload Screenshot
+                                        </button>
+                                    </form>
+                                </div>
+                            <?php else: ?>
+                                <div class="alert alert-success text-center">
+                                    <i class="fas fa-check-circle fa-2x mb-2"></i>
+                                    <h6>Screenshot Uploaded Successfully!</h6>
+                                    <small>Your screenshot has been submitted for this match.</small>
+                                </div>
                             <?php endif; ?>
                         <?php endif; ?>
                     </div>
