@@ -150,7 +150,7 @@ class Database {
                     INSERT INTO users (username, email, password, full_name, is_admin) 
                     VALUES (?, ?, ?, ?, ?)
                 ");
-                $stmt->execute(['admin', 'admin@esports.com', password_hash('admin123', PASSWORD_DEFAULT), 'Administrator', 1]);
+                $stmt->execute(['admin', 'admin@esports.com', '$2y$12$ZEOX1c5l5Y/lx9KWmS4VteQXDQ8q3vPY6ARV0YzF67vMfb4kCniPK', 'Administrator', 1]);
             }
         } catch (PDOException $e) {
             error_log("Error creating admin user: " . $e->getMessage());
