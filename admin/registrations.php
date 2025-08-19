@@ -24,17 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'approve') {
                 ");
                 $stmt->execute([$status, $registrationId]);
                 
-                // Log the action
-                $stmt = $pdo->prepare("
-                    INSERT INTO audit_logs (admin_id, action, table_name, record_id, new_values, created_at)
-                    VALUES (?, 'UPDATE', 'tournament_registrations', ?, ?, CURRENT_TIMESTAMP)
-                ");
-                $stmt->execute([
-                    $_SESSION['admin_id'], 
-                    $registrationId, 
-                    json_encode(['status' => $status, 'notes' => $adminNotes])
-                ]);
-                
                 // Create notification for user
                 $stmt = $pdo->prepare("
                     SELECT tr.user_id, t.name as tournament_name
