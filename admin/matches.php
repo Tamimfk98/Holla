@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     try {
                         $stmt = $pdo->prepare("
                             INSERT INTO matches (tournament_id, team1_id, team2_id, scheduled_date, round, status, created_at)
-                            VALUES (?, ?, ?, ?, ?, 'scheduled', NOW())
+                            VALUES (?, ?, ?, ?, ?, 'scheduled', CURRENT_TIMESTAMP)
                         ");
                         $stmt->execute([$tournament, $team1, $team2, $scheduledDate, $round]);
                         $success = 'Match created successfully';
@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     try {
                         $stmt = $pdo->prepare("
                             UPDATE matches 
-                            SET winner_id = ?, score1 = ?, score2 = ?, notes = ?, status = 'completed', completed_at = NOW()
+                            SET winner_id = ?, score1 = ?, score2 = ?, notes = ?, status = 'completed', completed_at = CURRENT_TIMESTAMP
                             WHERE id = ?
                         ");
                         $stmt->execute([$winnerId, $score1, $score2, $notes, $matchId]);

@@ -79,7 +79,7 @@ try {
     // Save screenshot record
     $stmt = $pdo->prepare("
         INSERT INTO match_screenshots (match_id, team_id, screenshot_url, uploaded_at)
-        VALUES (?, ?, ?, NOW())
+        VALUES (?, ?, ?, CURRENT_TIMESTAMP)
     ");
     $stmt->execute([$matchId, $_SESSION['user_id'], $uploadResult['filename']]);
     

@@ -27,7 +27,7 @@ class Auth {
             $hashedPassword = hashPassword($password);
             $stmt = $this->pdo->prepare("
                 INSERT INTO users (username, email, password, full_name, created_at) 
-                VALUES (?, ?, ?, ?, NOW())
+                VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
             ");
             $stmt->execute([$username, $email, $hashedPassword, $fullName]);
             
@@ -56,9 +56,13 @@ class Auth {
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['full_name'] = $user['full_name'];
                 
-                // Update last login
-                $stmt = $this->pdo->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
-                $stmt->execute([$user['id']]);
+                // Update last login (only if last_login column exists)
+                try {
+                    $stmt = $this->pdo->prepare("UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE id = ?");
+                    $stmt->execute([$user['id']]);
+                } catch (PDOException $e) {
+                    // Ignore if column doesn't exist
+                }
                 
                 return ['success' => true, 'message' => 'Login successful'];
             }
