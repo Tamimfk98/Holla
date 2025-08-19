@@ -7,6 +7,61 @@ $matchId = $_GET['id'] ?? null;
 $error = '';
 $success = '';
 
+// Handle screenshot upload
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_screenshot'])) {
+    if (!verifyCSRFToken($_POST['csrf_token'] ?? '')) {
+        $error = 'Invalid security token';
+    } else {
+        $uploadMatchId = (int)($_POST['match_id'] ?? 0);
+        
+        // Verify user is part of this match
+        $stmt = $pdo->prepare("
+            SELECT id FROM matches 
+            WHERE id = ? AND (team1_id = ? OR team2_id = ?)
+        ");
+        $stmt->execute([$uploadMatchId, $_SESSION['user_id'], $_SESSION['user_id']]);
+        $validMatch = $stmt->fetch();
+        
+        if ($validMatch && isset($_FILES['screenshot']) && $_FILES['screenshot']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = '../assets/images/screenshots/';
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0755, true);
+            }
+            
+            $fileInfo = pathinfo($_FILES['screenshot']['name']);
+            $fileName = 'match_' . $uploadMatchId . '_user_' . $_SESSION['user_id'] . '_' . time() . '.' . $fileInfo['extension'];
+            $uploadPath = $uploadDir . $fileName;
+            $screenshotPath = 'assets/images/screenshots/' . $fileName;
+            
+            // Validate file
+            $allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+            if (in_array(strtolower($fileInfo['extension']), $allowedTypes) && $_FILES['screenshot']['size'] <= 5242880) {
+                if (move_uploaded_file($_FILES['screenshot']['tmp_name'], $uploadPath)) {
+                    // Save to database
+                    try {
+                        $stmt = $pdo->prepare("
+                            INSERT INTO match_screenshots (match_id, team_id, screenshot_url, uploaded_at)
+                            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+                            ON CONFLICT (match_id, team_id) 
+                            DO UPDATE SET screenshot_url = EXCLUDED.screenshot_url, uploaded_at = EXCLUDED.uploaded_at
+                        ");
+                        $stmt->execute([$uploadMatchId, $_SESSION['user_id'], $screenshotPath]);
+                        $success = 'Screenshot uploaded successfully!';
+                    } catch (PDOException $e) {
+                        $error = 'Failed to save screenshot: ' . $e->getMessage();
+                    }
+                } else {
+                    $error = 'Failed to upload screenshot';
+                }
+            } else {
+                $error = 'Invalid file type or size too large (max 5MB)';
+            }
+        } else {
+            $error = 'Invalid match or no file selected';
+        }
+    }
+}
+
 // Get user matches
 $userId = $_SESSION['user_id'];
 
@@ -297,20 +352,65 @@ if ($flash) {
                                 </div>
                                 
                                 <div class="match-actions mt-auto">
-                                    <div class="btn-group w-100" role="group">
-                                        <a href="?action=view&id=<?= $match['id'] ?>" class="btn btn-outline-info">
-                                            <i class="fas fa-eye"></i> View
-                                        </a>
+                                    <div class="row g-2">
+                                        <div class="col">
+                                            <a href="?action=view&id=<?= $match['id'] ?>" class="btn btn-outline-info w-100">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                        </div>
+                                        
                                         <?php if ($match['status'] !== 'scheduled' && $match['status'] !== 'completed'): ?>
                                             <?php 
                                             $userScreenshot = ($match['team1_id'] == $userId) ? $match['team1_screenshot'] : $match['team2_screenshot'];
                                             if (!$userScreenshot): ?>
-                                                <a href="upload.php?match_id=<?= $match['id'] ?>" class="btn btn-warning">
-                                                    <i class="fas fa-upload"></i> Upload
-                                                </a>
+                                                <div class="col">
+                                                    <button class="btn btn-warning w-100" type="button" data-bs-toggle="collapse" 
+                                                            data-bs-target="#uploadForm<?= $match['id'] ?>" aria-expanded="false">
+                                                        <i class="fas fa-upload"></i> Upload
+                                                    </button>
+                                                </div>
                                             <?php endif; ?>
                                         <?php endif; ?>
                                     </div>
+                                    
+                                    <?php if ($match['status'] !== 'scheduled' && $match['status'] !== 'completed'): ?>
+                                        <?php 
+                                        $userScreenshot = ($match['team1_id'] == $userId) ? $match['team1_screenshot'] : $match['team2_screenshot'];
+                                        if (!$userScreenshot): ?>
+                                            <div class="collapse mt-3" id="uploadForm<?= $match['id'] ?>">
+                                                <div class="card bg-secondary">
+                                                    <div class="card-body">
+                                                        <form method="POST" enctype="multipart/form-data" class="upload-form">
+                                                            <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
+                                                            <input type="hidden" name="match_id" value="<?= $match['id'] ?>">
+                                                            
+                                                            <div class="mb-3">
+                                                                <label class="form-label text-light small">
+                                                                    <i class="fas fa-image text-accent"></i> Match Result Screenshot
+                                                                </label>
+                                                                <input type="file" class="form-control form-control-sm gaming-input" 
+                                                                       name="screenshot" accept="image/*" required>
+                                                                <div class="form-text text-light-50 small">
+                                                                    Upload a screenshot showing your match results (Max 5MB)
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="d-flex gap-2">
+                                                                <button type="submit" name="upload_screenshot" 
+                                                                        class="btn btn-accent btn-sm flex-fill">
+                                                                    <i class="fas fa-cloud-upload-alt"></i> Upload
+                                                                </button>
+                                                                <button type="button" class="btn btn-secondary btn-sm" 
+                                                                        data-bs-toggle="collapse" data-bs-target="#uploadForm<?= $match['id'] ?>">
+                                                                    <i class="fas fa-times"></i> Cancel
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
