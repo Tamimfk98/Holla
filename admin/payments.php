@@ -18,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($action === 'approve' || $action =
         try {
             $stmt = $pdo->prepare("
                 UPDATE payments 
-                SET status = ?, admin_notes = ?, processed_at = NOW(), processed_by = ?
+                SET status = ?, admin_notes = ?, processed_at = CURRENT_TIMESTAMP, processed_by = ?
                 WHERE id = ?
             ");
             $stmt->execute([$status, $notes, $_SESSION['admin_id'], $paymentId]);

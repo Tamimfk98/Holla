@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'pay') {
                         // Create payment record
                         $stmt = $pdo->prepare("
                             INSERT INTO payments (registration_id, amount, method, phone, transaction_id, status, created_at)
-                            VALUES (?, ?, ?, ?, ?, 'pending', NOW())
+                            VALUES (?, ?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)
                         ");
                         $stmt->execute([$registrationId, $registration['entry_fee'], $method, $phone, $transactionId]);
                         

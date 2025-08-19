@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         // Log wallet transaction
                         $stmt = $pdo->prepare("
                             INSERT INTO wallet_transactions (user_id, type, amount, balance_after, description, created_by, created_at)
-                            VALUES (?, ?, ?, ?, ?, ?, NOW())
+                            VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
                         ");
                         $description = $operation === 'add' ? 'Admin credit' : 'Admin debit';
                         $stmt->execute([$userId, $operation, $amount, $newBalance, $description, $_SESSION['admin_id']]);
