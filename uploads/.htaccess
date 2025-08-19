@@ -1,0 +1,66 @@
+# Uploads directory protection
+Options -Indexes
+Options -ExecCGI
+
+# Prevent execution of PHP files
+<Files "*.php">
+    Deny from all
+</Files>
+
+<Files "*.phtml">
+    Deny from all
+</Files>
+
+<Files "*.php3">
+    Deny from all
+</Files>
+
+<Files "*.php4">
+    Deny from all
+</Files>
+
+<Files "*.php5">
+    Deny from all
+</Files>
+
+<Files "*.pl">
+    Deny from all
+</Files>
+
+<Files "*.py">
+    Deny from all
+</Files>
+
+<Files "*.jsp">
+    Deny from all
+</Files>
+
+<Files "*.asp">
+    Deny from all
+</Files>
+
+<Files "*.sh">
+    Deny from all
+</Files>
+
+# Only allow image files
+<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+    Allow from all
+</FilesMatch>
+
+# Set proper MIME types
+<IfModule mod_mime.c>
+    AddType image/jpeg .jpg .jpeg
+    AddType image/png .png
+    AddType image/gif .gif
+    AddType image/webp .webp
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "DENY"
+</IfModule>
+
+# File size limit (5MB)
+LimitRequestBody 5242880
