@@ -16,7 +16,7 @@ This is a PHP-based eSports tournament website featuring:
 ### Database
 - **Engine**: SQLite (for development)
 - **Location**: `database/esports_tournament.db`
-- **Tables**: users, tournaments, tournament_registrations, matches, match_screenshots
+- **Tables**: users, tournaments, tournament_registrations, matches, match_screenshots, payments, wallet_transactions, notifications, admins
 - **Auto-initialization**: Schema creates automatically on first run
 
 ### File Structure
@@ -26,17 +26,35 @@ This is a PHP-based eSports tournament website featuring:
 - `/assets/` - CSS, JS, and uploaded images
 - `/includes/` - Helper functions
 
+### Two-Tier Winner Selection System
+**This is a key architectural feature of the tournament system:**
+
+1. **Match-Level Winners** (Individual Match Results)
+   - Location: `admin/results.php`
+   - Process: Users upload match screenshots → Admin reviews and selects match winners
+   - Purpose: Determines winners of individual matches for bracket progression
+   - Updates: match.winner_id, scores, match status
+
+2. **Tournament-Level Champions** (Final Tournament Results)
+   - Location: `admin/tournament_results.php` 
+   - Process: Admin selects final tournament champions (1st, 2nd, 3rd place)
+   - Purpose: Determines overall tournament winners who receive prize money
+   - Updates: tournament.winner_id, runner_up_id, third_place_id + automatic wallet distribution
+
 ### Key Features
 1. **Admin Panel**
-   - Tournament CRUD operations
+   - Tournament CRUD operations with status management
    - Thumbnail upload and display
-   - User management
-   - Match management
+   - User management with wallet tracking
+   - Match management with round support
+   - Two-tier winner selection system
+   - Payment and withdrawal approval
 
 2. **User Panel**
    - Tournament browsing and registration
    - Match viewing and screenshot upload
-   - Profile management
+   - Profile management with wallet balance
+   - Withdrawal request system
 
 ## Recent Changes (August 19, 2025)
 
@@ -102,6 +120,13 @@ This is a PHP-based eSports tournament website featuring:
 - Tournament and match management
 - Withdrawal request processing
 - All admin features fully operational
+
+✓ **Two-Tier Winner Selection System Operational**
+- Match-level winners: Users upload screenshots, admin selects individual match winners
+- Tournament-level champions: Admin selects final tournament winners (1st, 2nd, 3rd place)
+- Automatic prize distribution to tournament champions' wallets
+- Clear separation between match progression and final tournament results
+- Complete notification system for both match and tournament winners
 
 ## User Preferences
 
