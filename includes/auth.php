@@ -75,21 +75,19 @@ class Auth {
     public function loginAdmin($username, $password) {
         try {
             $stmt = $this->pdo->prepare("
-                SELECT id, username, password, role, status 
-                FROM admins 
-                WHERE username = ? AND status = 'active'
+                SELECT id, username, email, password, full_name, is_admin 
+                FROM users 
+                WHERE (username = ? OR email = ?) AND is_admin = 1
             ");
-            $stmt->execute([$username]);
+            $stmt->execute([$username, $username]);
             $admin = $stmt->fetch();
             
-            if ($admin && verifyPassword($password, $admin['password'])) {
+            if ($admin && password_verify($password, $admin['password'])) {
                 $_SESSION['admin_id'] = $admin['id'];
                 $_SESSION['admin_username'] = $admin['username'];
-                $_SESSION['admin_role'] = $admin['role'];
-                
-                // Update last login
-                $stmt = $this->pdo->prepare("UPDATE admins SET last_login = NOW() WHERE id = ?");
-                $stmt->execute([$admin['id']]);
+                $_SESSION['admin_email'] = $admin['email'];
+                $_SESSION['admin_name'] = $admin['full_name'];
+                $_SESSION['is_admin'] = true;
                 
                 return ['success' => true, 'message' => 'Admin login successful'];
             }
