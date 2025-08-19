@@ -4,7 +4,7 @@ expertMode = true
 
 [nix]
 channel = "stable-25_05"
-packages = ["php", "php82Extensions.mysqli"]
+packages = ["php", "php82Extensions.mysqli", "sqlite"]
 
 [workflows]
 runButton = "Project"
