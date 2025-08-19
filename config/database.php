@@ -7,10 +7,10 @@ class Database {
     private $conn;
 
     public function __construct() {
-        $this->host = $_ENV['PGHOST'] ?? 'localhost';
-        $this->db_name = $_ENV['PGDATABASE'] ?? 'esports_tournament';
-        $this->username = $_ENV['PGUSER'] ?? 'root';
-        $this->password = $_ENV['PGPASSWORD'] ?? '';
+    $this->host = $_ENV['DB_HOST'] ?? 'localhost';
+    $this->db_name = $_ENV['DB_NAME'] ?? 'esports_tournament';
+    $this->username = $_ENV['DB_USER'] ?? 'root';
+    $this->password = $_ENV['DB_PASSWORD'] ?? '';
     }
 
     public function getConnection() {
@@ -18,7 +18,7 @@ class Database {
 
         try {
             $this->conn = new PDO(
-                "pgsql:host=" . $this->host . ";dbname=" . $this->db_name,
+                "mysql:host=" . $this->host . ";dbname=" . $this->db_name . ";charset=utf8mb4",
                 $this->username,
                 $this->password,
                 [
