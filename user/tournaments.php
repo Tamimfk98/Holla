@@ -32,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'register') {
                     // Register for tournament
                     $stmt = $pdo->prepare("
                         INSERT INTO tournament_registrations (user_id, tournament_id, team_name, team_members, status, created_at)
-                        VALUES (?, ?, ?, ?, 'pending', NOW())
+                        VALUES (?, ?, ?, ?, 'pending', CURRENT_TIMESTAMP)
                     ");
                     $stmt->execute([$_SESSION['user_id'], $tournamentId, $teamName, $teamMembers]);
                     $registrationId = $pdo->lastInsertId();
@@ -102,12 +102,12 @@ if ($action === 'list') {
     $stmt = $pdo->prepare("
         SELECT t.*, 
                COUNT(tr.id) as registered_teams,
-               (CASE WHEN utr.id IS NOT NULL THEN 1 ELSE 0 END) as is_registered
+               MAX(CASE WHEN utr.id IS NOT NULL THEN 1 ELSE 0 END) as is_registered
         FROM tournaments t
         LEFT JOIN tournament_registrations tr ON t.id = tr.tournament_id AND tr.status = 'approved'
         LEFT JOIN tournament_registrations utr ON t.id = utr.tournament_id AND utr.user_id = ?
         $whereClause
-        GROUP BY t.id
+        GROUP BY t.id, t.name, t.description, t.game_type, t.max_teams, t.entry_fee, t.prize_pool, t.start_date, t.end_date, t.status, t.created_at, t.updated_at
         ORDER BY t.start_date ASC, t.created_at DESC
     ");
     $params = array_merge([$_SESSION['user_id']], $params);
