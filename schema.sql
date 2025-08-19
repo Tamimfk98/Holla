@@ -428,7 +428,7 @@ BEGIN
     VALUES (NEW.id, 'UPDATE', 'users', NEW.id, 
             JSON_OBJECT('username', OLD.username, 'email', OLD.email, 'status', OLD.status, 'wallet_balance', OLD.wallet_balance),
             JSON_OBJECT('username', NEW.username, 'email', NEW.email, 'status', NEW.status, 'wallet_balance', NEW.wallet_balance),
-            NOW());
+            CURRENT_TIMESTAMP);
 END//
 
 -- Trigger for tournament registration updates
@@ -440,7 +440,7 @@ BEGIN
     VALUES (NEW.user_id, 'UPDATE', 'tournament_registrations', NEW.id, 
             JSON_OBJECT('status', OLD.status),
             JSON_OBJECT('status', NEW.status),
-            NOW());
+            CURRENT_TIMESTAMP);
 END//
 
 -- Trigger for payment updates
@@ -452,7 +452,7 @@ BEGIN
     VALUES (NEW.processed_by, 'UPDATE', 'payments', NEW.id, 
             JSON_OBJECT('status', OLD.status, 'admin_notes', OLD.admin_notes),
             JSON_OBJECT('status', NEW.status, 'admin_notes', NEW.admin_notes),
-            NOW());
+            CURRENT_TIMESTAMP);
 END//
 
 -- Trigger for wallet balance updates
@@ -467,7 +467,7 @@ BEGIN
                 ABS(NEW.wallet_balance - OLD.wallet_balance),
                 NEW.wallet_balance,
                 'Wallet balance updated',
-                NOW());
+                CURRENT_TIMESTAMP);
     END IF;
 END//
 
@@ -554,7 +554,7 @@ BEGIN
         score2 = score2,
         notes = notes,
         status = 'completed',
-        completed_at = NOW()
+        completed_at = CURRENT_TIMESTAMP
     WHERE id = match_id;
     
     -- Add notification for both teams
