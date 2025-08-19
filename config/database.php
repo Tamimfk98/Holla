@@ -60,6 +60,7 @@ class Database {
                     password VARCHAR(255) NOT NULL,
                     full_name VARCHAR(100) NOT NULL,
                     phone VARCHAR(20),
+                    wallet_balance DECIMAL(10,2) DEFAULT 0.00,
                     is_admin BOOLEAN DEFAULT 0,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -74,12 +75,21 @@ class Database {
                     max_teams INTEGER NOT NULL,
                     entry_fee DECIMAL(10,2) DEFAULT 0,
                     prize_pool DECIMAL(10,2) DEFAULT 0,
+                    winner_prize DECIMAL(10,2) DEFAULT 0,
+                    runner_up_prize DECIMAL(10,2) DEFAULT 0,
+                    third_place_prize DECIMAL(10,2) DEFAULT 0,
                     start_date DATETIME,
                     end_date DATETIME,
                     status VARCHAR(20) DEFAULT 'upcoming',
+                    winner_id INTEGER,
+                    runner_up_id INTEGER,
+                    third_place_id INTEGER,
                     thumbnail VARCHAR(255),
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (winner_id) REFERENCES users(id),
+                    FOREIGN KEY (runner_up_id) REFERENCES users(id),
+                    FOREIGN KEY (third_place_id) REFERENCES users(id)
                 )
             ",
             'tournament_registrations' => "
@@ -127,6 +137,34 @@ class Database {
                     FOREIGN KEY (match_id) REFERENCES matches(id) ON DELETE CASCADE,
                     FOREIGN KEY (team_id) REFERENCES users(id) ON DELETE CASCADE,
                     UNIQUE(match_id, team_id)
+                )
+            ",
+            'withdrawal_requests' => "
+                CREATE TABLE IF NOT EXISTS withdrawal_requests (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    amount DECIMAL(10,2) NOT NULL,
+                    payment_method VARCHAR(20) NOT NULL,
+                    account_number VARCHAR(50) NOT NULL,
+                    status VARCHAR(20) DEFAULT 'pending',
+                    admin_notes TEXT,
+                    requested_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    processed_at DATETIME,
+                    processed_by INTEGER,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                    FOREIGN KEY (processed_by) REFERENCES users(id)
+                )
+            ",
+            'notifications' => "
+                CREATE TABLE IF NOT EXISTS notifications (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    user_id INTEGER NOT NULL,
+                    title VARCHAR(200) NOT NULL,
+                    message TEXT NOT NULL,
+                    type VARCHAR(50) DEFAULT 'info',
+                    is_read BOOLEAN DEFAULT 0,
+                    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
                 )
             "
         ];

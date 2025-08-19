@@ -245,6 +245,9 @@ if ($flash) {
                                                         <a href="?action=edit&id=<?= $t['id'] ?>" class="btn btn-sm btn-outline-warning">
                                                             <i class="fas fa-edit"></i>
                                                         </a>
+                                                        <a href="tournament_results.php?id=<?= $t['id'] ?>" class="btn btn-sm btn-outline-success">
+                                                            <i class="fas fa-trophy"></i>
+                                                        </a>
                                                         <a href="?action=delete&id=<?= $t['id'] ?>" 
                                                            class="btn btn-sm btn-outline-danger"
                                                            onclick="return confirm('Are you sure you want to delete this tournament?')">

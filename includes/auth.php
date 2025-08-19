@@ -43,9 +43,9 @@ class Auth {
     public function loginUser($username, $password) {
         try {
             $stmt = $this->pdo->prepare("
-                SELECT id, username, email, password, full_name, status 
+                SELECT id, username, email, password, full_name 
                 FROM users 
-                WHERE (username = ? OR email = ?) AND status = 'active'
+                WHERE (username = ? OR email = ?)
             ");
             $stmt->execute([$username, $username]);
             $user = $stmt->fetch();
@@ -67,7 +67,7 @@ class Auth {
                 return ['success' => true, 'message' => 'Login successful'];
             }
             
-            return ['success' => false, 'message' => 'Invalid credentials or account inactive'];
+            return ['success' => false, 'message' => 'Invalid credentials'];
         } catch (PDOException $e) {
             return ['success' => false, 'message' => 'Login failed: ' . $e->getMessage()];
         }

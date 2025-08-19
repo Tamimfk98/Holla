@@ -34,6 +34,12 @@
                     <i class="fas fa-users"></i> Users
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link <?= basename($_SERVER['PHP_SELF']) === 'withdrawals.php' ? 'active' : '' ?>" 
+                   href="withdrawals.php">
+                    <i class="fas fa-money-bill-wave"></i> Withdrawals
+                </a>
+            </li>
         </ul>
     </div>
 </div>
