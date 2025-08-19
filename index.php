@@ -78,19 +78,54 @@ require_once 'config/config.php';
                 </div>
                 <div class="col-lg-6">
                     <div class="gaming-card">
-                        <h3 class="text-accent mb-4"><i class="fas fa-bolt"></i> Live Tournaments</h3>
-                        <div class="tournament-preview">
-                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="badge bg-success">Active</span>
-                                <span class="text-accent fw-bold">৳50,000 Prize Pool</span>
+                        <h3 class="text-accent mb-4"><i class="fas fa-bolt"></i> Featured Tournaments</h3>
+                        <?php
+                        try {
+                            $stmt = $pdo->prepare("
+                                SELECT t.*, COUNT(tr.id) as registered_teams 
+                                FROM tournaments t 
+                                LEFT JOIN tournament_registrations tr ON t.id = tr.tournament_id AND tr.status = 'approved'
+                                WHERE t.status = 'upcoming'
+                                GROUP BY t.id, t.name, t.description, t.game_type, t.max_teams, t.entry_fee, t.prize_pool, t.start_date, t.end_date, t.status, t.created_at, t.updated_at, t.thumbnail
+                                ORDER BY t.prize_pool DESC 
+                                LIMIT 2
+                            ");
+                            $stmt->execute();
+                            $featuredTournaments = $stmt->fetchAll();
+                            
+                            if ($featuredTournaments):
+                                foreach ($featuredTournaments as $tournament):
+                                    $percentage = ($tournament['registered_teams'] / $tournament['max_teams']) * 100;
+                        ?>
+                        <div class="tournament-preview mb-3">
+                            <div class="row align-items-center">
+                                <div class="col-3">
+                                    <img src="<?= $tournament['thumbnail'] ?>" alt="<?= htmlspecialchars($tournament['game_type']) ?>" 
+                                         class="img-fluid rounded" style="max-height: 60px; object-fit: cover;">
+                                </div>
+                                <div class="col-9">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-success">Upcoming</span>
+                                        <span class="text-accent fw-bold">৳<?= number_format($tournament['prize_pool']) ?> Prize</span>
+                                    </div>
+                                    <h6 class="text-light mb-1"><?= htmlspecialchars($tournament['name']) ?></h6>
+                                    <p class="text-light-50 small mb-2"><?= htmlspecialchars($tournament['game_type']) ?> • <?= $tournament['max_teams'] ?> teams</p>
+                                    <div class="progress mb-2" style="height: 6px;">
+                                        <div class="progress-bar bg-accent" style="width: <?= $percentage ?>%"></div>
+                                    </div>
+                                    <p class="small text-light-50 mb-0"><?= $tournament['registered_teams'] ?>/<?= $tournament['max_teams'] ?> teams</p>
+                                </div>
                             </div>
-                            <h5 class="text-light">Championship Series</h5>
-                            <p class="text-light-50 small">Multiple games • 64 teams • 3 days</p>
-                            <div class="progress mb-3" style="height: 8px;">
-                                <div class="progress-bar bg-accent" style="width: 75%"></div>
-                            </div>
-                            <p class="small text-light-50 mb-0">48/64 teams registered</p>
                         </div>
+                        <?php 
+                                endforeach;
+                            else:
+                        ?>
+                        <div class="tournament-preview">
+                            <p class="text-light-50 text-center">No upcoming tournaments at the moment.</p>
+                        </div>
+                        <?php endif; ?>
+                        <?php } catch (Exception $e) { /* Ignore database errors on homepage */ } ?>
                     </div>
                 </div>
             </div>

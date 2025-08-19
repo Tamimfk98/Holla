@@ -256,6 +256,13 @@ if ($flash) {
                     <?php foreach ($tournaments as $t): ?>
                         <div class="col-lg-6 col-xl-4 mb-4">
                             <div class="gaming-card tournament-card h-100">
+                                <?php if ($t['thumbnail']): ?>
+                                <div class="tournament-thumbnail mb-3">
+                                    <img src="<?= htmlspecialchars($t['thumbnail']) ?>" alt="<?= htmlspecialchars($t['game_type']) ?>" 
+                                         class="img-fluid rounded" style="width: 100%; height: 150px; object-fit: cover;">
+                                </div>
+                                <?php endif; ?>
+                                
                                 <div class="tournament-header">
                                     <div class="d-flex justify-content-between align-items-start mb-3">
                                         <span class="badge bg-<?= $t['status'] === 'active' ? 'success' : ($t['status'] === 'upcoming' ? 'info' : 'secondary') ?>">
