@@ -58,11 +58,11 @@ $flash = getFlashMessage();
     <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 <body>
-    <?php include 'includes/navbar.php'; ?>
+    <?php include '../includes/navbar.php'; ?>
     
     <div class="container-fluid">
         <div class="row">
-            <?php include 'includes/sidebar.php'; ?>
+            <?php include '../includes/sidebar.php'; ?>
             
             <div class="col-lg-10 main-content">
                 <div class="d-flex justify-content-between align-items-center mb-4">
