@@ -98,7 +98,7 @@ $stmt = $pdo->prepare("
     JOIN users u2 ON m.team2_id = u2.id
     LEFT JOIN match_screenshots ms ON m.id = ms.match_id AND ms.team_id = ?
     WHERE (m.team1_id = ? OR m.team2_id = ?) 
-    AND m.status IN ('live', 'active')
+    AND m.status IN ('live', 'active', 'scheduled')
     AND ms.id IS NULL
     ORDER BY m.scheduled_date ASC
 ");
