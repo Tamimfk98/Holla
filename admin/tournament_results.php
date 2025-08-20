@@ -31,11 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $runnerUpPrize = (float)($_POST['runner_up_prize'] ?? 0);
         $thirdPlacePrize = (float)($_POST['third_place_prize'] ?? 0);
         
-        if ($winnerId && $runnerUpId && $thirdPlaceId) {
+        if ($winnerId) {
             try {
                 $pdo->beginTransaction();
                 
-                // Update tournament with results
+                // Update tournament with results (runner-up and 3rd place are optional)
                 $stmt = $pdo->prepare("
                     UPDATE tournaments 
                     SET winner_id = ?, runner_up_id = ?, third_place_id = ?, 
@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         status = 'completed', updated_at = CURRENT_TIMESTAMP
                     WHERE id = ?
                 ");
-                $stmt->execute([$winnerId, $runnerUpId, $thirdPlaceId, $winnerPrize, $runnerUpPrize, $thirdPlacePrize, $tournamentId]);
+                $stmt->execute([$winnerId, $runnerUpId ?: null, $thirdPlaceId ?: null, $winnerPrize, $runnerUpPrize, $thirdPlacePrize, $tournamentId]);
                 
                 // Add prize money to winner's wallet
                 if ($winnerPrize > 0) {
@@ -59,8 +59,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         "You won the tournament '{$tournament['name']}' and earned $" . number_format($winnerPrize, 2) . "! The amount has been added to your wallet.", 'success']);
                 }
                 
-                // Add prize money to runner-up's wallet
-                if ($runnerUpPrize > 0) {
+                // Add prize money to runner-up's wallet (only if runner-up selected)
+                if ($runnerUpId && $runnerUpPrize > 0) {
                     $stmt = $pdo->prepare("UPDATE users SET wallet_balance = wallet_balance + ? WHERE id = ?");
                     $stmt->execute([$runnerUpPrize, $runnerUpId]);
                     
@@ -73,8 +73,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         "You came 2nd in the tournament '{$tournament['name']}' and earned $" . number_format($runnerUpPrize, 2) . "! The amount has been added to your wallet.", 'success']);
                 }
                 
-                // Add prize money to third place's wallet
-                if ($thirdPlacePrize > 0) {
+                // Add prize money to third place's wallet (only if third place selected)
+                if ($thirdPlaceId && $thirdPlacePrize > 0) {
                     $stmt = $pdo->prepare("UPDATE users SET wallet_balance = wallet_balance + ? WHERE id = ?");
                     $stmt->execute([$thirdPlacePrize, $thirdPlaceId]);
                     
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $error = 'Database error: ' . $e->getMessage();
             }
         } else {
-            $error = 'Please select all three positions';
+            $error = 'Please select at least the tournament champion (1st place)';
         }
     }
 }
@@ -252,7 +252,8 @@ if ($flash) {
                     
                     <div class="alert alert-warning mb-4">
                         <h6 class="text-warning"><i class="fas fa-exclamation-triangle"></i> Important:</h6>
-                        <p class="mb-2">This page is for selecting the <strong>overall tournament winners</strong> (Champion, Runner-up, 3rd Place) - the final tournament ranking.</p>
+                        <p class="mb-2">This page is for selecting the <strong>overall tournament winners</strong> - the final tournament ranking.</p>
+                        <p class="mb-2"><strong>Champion (1st place) is required.</strong> Runner-up and 3rd place are optional - you can leave them blank if you only want to award the champion.</p>
                         <p class="mb-0">For individual match results and screenshot reviews, use the <a href="results.php" class="text-accent">Match Results</a> page.</p>
                     </div>
                     
@@ -286,10 +287,10 @@ if ($flash) {
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="runner_up_id" class="form-label text-light">
-                                        <i class="fas fa-medal text-info"></i> Runner-up (2nd Place) *
+                                        <i class="fas fa-medal text-info"></i> Runner-up (2nd Place) <small class="text-light-50">(Optional)</small>
                                     </label>
-                                    <select class="form-select gaming-input" id="runner_up_id" name="runner_up_id" required>
-                                        <option value="">Select Runner-up</option>
+                                    <select class="form-select gaming-input" id="runner_up_id" name="runner_up_id">
+                                        <option value="">Select Runner-up (Optional)</option>
                                         <?php foreach ($registeredUsers as $user): ?>
                                             <option value="<?= $user['id'] ?>"><?= htmlspecialchars($user['full_name']) ?> (@<?= htmlspecialchars($user['username']) ?>) - <?= htmlspecialchars($user['team_name']) ?></option>
                                         <?php endforeach; ?>
@@ -311,10 +312,10 @@ if ($flash) {
                             <div class="col-md-6">
                                 <div class="mb-3">
                                     <label for="third_place_id" class="form-label text-light">
-                                        <i class="fas fa-award text-secondary"></i> Third Place *
+                                        <i class="fas fa-award text-secondary"></i> Third Place <small class="text-light-50">(Optional)</small>
                                     </label>
-                                    <select class="form-select gaming-input" id="third_place_id" name="third_place_id" required>
-                                        <option value="">Select Third Place</option>
+                                    <select class="form-select gaming-input" id="third_place_id" name="third_place_id">
+                                        <option value="">Select Third Place (Optional)</option>
                                         <?php foreach ($registeredUsers as $user): ?>
                                             <option value="<?= $user['id'] ?>"><?= htmlspecialchars($user['full_name']) ?> (@<?= htmlspecialchars($user['username']) ?>) - <?= htmlspecialchars($user['team_name']) ?></option>
                                         <?php endforeach; ?>

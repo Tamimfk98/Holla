@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Web App - Professional Landing Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#EFF6FF',
+                            500: '#3B82F6',
+                            600: '#2563EB',
+                            700: '#1D4ED8'
+                        }
+                    }
+                }
+            }
+        };
+    </script>
+</head>
+<body class="font-inter bg-gray-50 text-gray-900 antialiased">
+    <!-- @COMPONENT: Header [responsive navigation with logo and menu items] -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <!-- Logo -->
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-rocket text-white text-sm"></i>
+                    </div>
+                    <span class="text-xl font-bold text-gray-900" data-bind="app.name">ModernApp</span>
+                </div>
+
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-gray-600 hover:text-primary-500 transition-colors duration-200">Home</a>
+                    <a href="#about" class="text-gray-600 hover:text-primary-500 transition-colors duration-200">About</a>
+                    <a href="#services" class="text-gray-600 hover:text-primary-500 transition-colors duration-200">Services</a>
+                    <a href="#contact" class="text-gray-600 hover:text-primary-500 transition-colors duration-200">Contact</a>
+                    <button data-event="click:handleGetStarted" class="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium">
+                        Get Started
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden text-gray-600 hover:text-gray-900" data-event="click:toggleMobileMenu">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Mobile Navigation -->
+            <!-- @STATE: mobileMenuOpen:boolean = false -->
+            <div class="md:hidden mt-4 pb-4 border-t border-gray-200 hidden" data-mobile-menu="true">
+                <div class="flex flex-col space-y-4 pt-4">
+                    <a href="#home" class="text-gray-600 hover:text-primary-500 transition-colors duration-200">Home</a>
+                    <a href="#about" class="text-gray-600 hover:text-primary-500 transition-colors duration-200">About</a>
+                    <a href="#services" class="text-gray-600 hover:text-primary-500 transition-colors duration-200">Services</a>
+                    <a href="#contact" class="text-gray-600 hover:text-primary-500 transition-colors duration-200">Contact</a>
+                    <button class="bg-primary-500 text-white px-6 py-2 rounded-lg hover:bg-primary-600 transition-colors duration-200 font-medium w-full">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!-- @END_COMPONENT: Header -->
+
+    <main>
+        <!-- @COMPONENT: HeroSection [main landing section with call-to-action] -->
+        <section id="home" class="bg-gradient-to-br from-primary-50 to-white py-20">
+            <div class="container mx-auto px-6">
+                <div class="max-w-4xl mx-auto text-center">
+                    <h1 class="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                        Build Something <span class="text-primary-500">Amazing</span> Today
+                    </h1>
+                    <p class="text-xl text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed" data-mock="true">
+                        Create powerful web applications with our modern, scalable platform. 
+                        Everything you need to bring your ideas to life, from concept to deployment.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button data-event="click:handleStartBuilding" class="bg-primary-500 text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-primary-600 transition-all duration-200 shadow-lg hover:shadow-xl">
+                            Start Building
+                        </button>
+                        <button data-event="click:handleLearnMore" class="bg-white text-primary-500 px-8 py-4 rounded-lg text-lg font-medium border-2 border-primary-500 hover:bg-primary-50 transition-all duration-200">
+                            Learn More
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: HeroSection -->
+
+        <!-- @COMPONENT: FeaturesSection [grid of feature cards] -->
+        <section id="about" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                        Why Choose Our Platform?
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-2xl mx-auto" data-mock="true">
+                        Discover the features that make our platform the perfect choice for modern web development.
+                    </p>
+                </div>
+
+                <!-- @MAP: features.map(feature => ( -->
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <div class="bg-gray-50 p-8 rounded-2xl hover:shadow-lg transition-shadow duration-300">
+                        <div class="w-12 h-12 bg-primary-500 rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-lightning-bolt text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4" data-mock="true">Lightning Fast</h3>
+                        <p class="text-gray-600 leading-relaxed" data-mock="true">
+                            Optimized performance ensures your applications load quickly and run smoothly across all devices.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-2xl hover:shadow-lg transition-shadow duration-300">
+                        <div class="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-shield-alt text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4" data-mock="true">Secure by Default</h3>
+                        <p class="text-gray-600 leading-relaxed" data-mock="true">
+                            Enterprise-grade security features protect your data and users with industry-standard protocols.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-2xl hover:shadow-lg transition-shadow duration-300">
+                        <div class="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-mobile-alt text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4" data-mock="true">Mobile First</h3>
+                        <p class="text-gray-600 leading-relaxed" data-mock="true">
+                            Responsive design ensures perfect functionality and appearance on any screen size.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-2xl hover:shadow-lg transition-shadow duration-300">
+                        <div class="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-code text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4" data-mock="true">Developer Friendly</h3>
+                        <p class="text-gray-600 leading-relaxed" data-mock="true">
+                            Clean APIs, comprehensive documentation, and powerful development tools for efficient coding.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-2xl hover:shadow-lg transition-shadow duration-300">
+                        <div class="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-chart-line text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4" data-mock="true">Scalable</h3>
+                        <p class="text-gray-600 leading-relaxed" data-mock="true">
+                            Built to grow with your business, handling everything from startups to enterprise applications.
+                        </p>
+                    </div>
+
+                    <div class="bg-gray-50 p-8 rounded-2xl hover:shadow-lg transition-shadow duration-300">
+                        <div class="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mb-6">
+                            <i class="fas fa-headset text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4" data-mock="true">24/7 Support</h3>
+                        <p class="text-gray-600 leading-relaxed" data-mock="true">
+                            Expert support team available around the clock to help you succeed with your projects.
+                        </p>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </section>
+        <!-- @END_COMPONENT: FeaturesSection -->
+
+        <!-- @COMPONENT: ServicesSection [services overview] -->
+        <section id="services" class="py-20 bg-gray-50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                        Our Services
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-2xl mx-auto" data-mock="true">
+                        Comprehensive solutions to help you build, deploy, and scale your applications.
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                    <div class="bg-white p-8 rounded-2xl shadow-sm">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-primary-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-laptop-code text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-semibold text-gray-900 mb-4" data-mock="true">Web Development</h3>
+                                <p class="text-gray-600 leading-relaxed mb-4" data-mock="true">
+                                    Custom web applications built with modern technologies and best practices. 
+                                    From simple websites to complex enterprise solutions.
+                                </p>
+                                <ul class="space-y-2 text-gray-600">
+                                    <li class="flex items-center" data-mock="true">
+                                        <i class="fas fa-check text-primary-500 mr-2"></i>
+                                        Responsive Design
+                                    </li>
+                                    <li class="flex items-center" data-mock="true">
+                                        <i class="fas fa-check text-primary-500 mr-2"></i>
+                                        Performance Optimization
+                                    </li>
+                                    <li class="flex items-center" data-mock="true">
+                                        <i class="fas fa-check text-primary-500 mr-2"></i>
+                                        SEO Best Practices
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-8 rounded-2xl shadow-sm">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-cloud text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-semibold text-gray-900 mb-4" data-mock="true">Cloud Solutions</h3>
+                                <p class="text-gray-600 leading-relaxed mb-4" data-mock="true">
+                                    Scalable cloud infrastructure and deployment solutions to ensure your applications 
+                                    are always available and performing at their best.
+                                </p>
+                                <ul class="space-y-2 text-gray-600">
+                                    <li class="flex items-center" data-mock="true">
+                                        <i class="fas fa-check text-primary-500 mr-2"></i>
+                                        Auto-scaling Infrastructure
+                                    </li>
+                                    <li class="flex items-center" data-mock="true">
+                                        <i class="fas fa-check text-primary-500 mr-2"></i>
+                                        Continuous Deployment
+                                    </li>
+                                    <li class="flex items-center" data-mock="true">
+                                        <i class="fas fa-check text-primary-500 mr-2"></i>
+                                        Monitoring & Analytics
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: ServicesSection -->
+
+        <!-- @COMPONENT: ContactSection [contact form and information] -->
+        <section id="contact" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                        Get In Touch
+                    </h2>
+                    <p class="text-xl text-gray-600 max-w-2xl mx-auto" data-mock="true">
+                        Ready to start your project? Contact us today and let's build something amazing together.
+                    </p>
+                </div>
+
+                <div class="grid lg:grid-cols-2 gap-16 max-w-6xl mx-auto">
+                    <!-- Contact Form -->
+                    <div class="bg-gray-50 p-8 rounded-2xl">
+                        <form data-implementation="Should validate and submit contact form">
+                            <div class="grid md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label for="firstName" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                                    <input type="text" id="firstName" name="firstName" 
+                                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors"
+                                           placeholder="John" data-mock="true">
+                                </div>
+                                <div>
+                                    <label for="lastName" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                                    <input type="text" id="lastName" name="lastName" 
+                                           class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors"
+                                           placeholder="Doe" data-mock="true">
+                                </div>
+                            </div>
+                            <div class="mb-6">
+                                <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" id="email" name="email" 
+                                       class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors"
+                                       placeholder="john@example.com" data-mock="true">
+                            </div>
+                            <div class="mb-6">
+                                <label for="message" class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                                <textarea id="message" name="message" rows="5"
+                                         class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 transition-colors"
+                                         placeholder="Tell us about your project..." data-mock="true"></textarea>
+                            </div>
+                            <button type="submit" data-event="click:handleFormSubmit" 
+                                   class="w-full bg-primary-500 text-white px-8 py-4 rounded-lg font-medium hover:bg-primary-600 transition-colors duration-200">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Contact Information -->
+                    <div class="flex flex-col justify-center space-y-8">
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-primary-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-map-marker-alt text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 mb-2" data-mock="true">Address</h3>
+                                <p class="text-gray-600" data-mock="true">
+                                    123 Innovation Street<br>
+                                    Tech City, TC 12345<br>
+                                    United States
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-phone text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 mb-2" data-mock="true">Phone</h3>
+                                <p class="text-gray-600" data-mock="true">+1 (555) 123-4567</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start space-x-4">
+                            <div class="w-12 h-12 bg-purple-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-envelope text-white text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold text-gray-900 mb-2" data-mock="true">Email</h3>
+                                <p class="text-gray-600" data-mock="true">hello@modernapp.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- @END_COMPONENT: ContactSection -->
+    </main>
+
+    <!-- @COMPONENT: Footer [site footer with links and social media] -->
+    <footer class="bg-gray-900 text-white py-16">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <!-- Brand -->
+                <div class="lg:col-span-2">
+                    <div class="flex items-center space-x-2 mb-6">
+                        <div class="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-rocket text-white text-sm"></i>
+                        </div>
+                        <span class="text-xl font-bold" data-bind="app.name">ModernApp</span>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed mb-6 max-w-md" data-mock="true">
+                        Building the future of web applications with cutting-edge technology and innovative solutions. 
+                        Join thousands of developers who trust our platform.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-500 transition-colors duration-200">
+                            <i class="fab fa-twitter text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-500 transition-colors duration-200">
+                            <i class="fab fa-linkedin text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-500 transition-colors duration-200">
+                            <i class="fab fa-github text-white"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-primary-500 transition-colors duration-200">
+                            <i class="fab fa-discord text-white"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-6" data-mock="true">Quick Links</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#home" class="text-gray-400 hover:text-white transition-colors duration-200">Home</a></li>
+                        <li><a href="#about" class="text-gray-400 hover:text-white transition-colors duration-200">About</a></li>
+                        <li><a href="#services" class="text-gray-400 hover:text-white transition-colors duration-200">Services</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white transition-colors duration-200">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-6" data-mock="true">Support</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200" data-mock="true">Documentation</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200" data-mock="true">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200" data-mock="true">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors duration-200" data-mock="true">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 pt-8">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-400" data-mock="true">
+                        © 2024 ModernApp. All rights reserved.
+                    </p>
+                    <p class="text-gray-400 mt-4 md:mt-0" data-mock="true">
+                        Built with ❤️ using modern web technologies
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <script>
+        // TODO: Implement mobile menu toggle functionality
+        (function() {
+            const mobileMenuButton = document.querySelector('[data-event="click:toggleMobileMenu"]');
+            const mobileMenu = document.querySelector('[data-mobile-menu="true"]');
+            
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+
+            // TODO: Implement smooth scrolling for navigation links
+            const navLinks = document.querySelectorAll('a[href^="#"]');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // TODO: Implement form validation and submission
+            const contactForm = document.querySelector('form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // Form validation and submission logic would go here
+                    console.log('Form submitted - implement actual submission logic');
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

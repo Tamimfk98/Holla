@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#10B981',
+                        success: '#059669',
+                        warning: '#F59E0B',
+                        error: '#EF4444',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-inter bg-slate-50 min-h-screen">
+    <!-- @COMPONENT: NavigationHeader -->
+    <nav class="bg-white border-b border-slate-200 px-6 py-4">
+        <div class="flex items-center justify-between max-w-7xl mx-auto">
+            <div class="flex items-center space-x-8">
+                <h1 class="text-xl font-bold text-slate-800">Tournament Manager</h1>
+                <div class="flex space-x-6">
+                    <button class="px-4 py-2 text-slate-600 hover:text-slate-800 font-medium transition-colors" data-tab="user-matches">My Matches</button>
+                    <button class="px-4 py-2 text-slate-600 hover:text-slate-800 font-medium transition-colors" data-tab="tournaments">Tournaments</button>
+                    <button class="px-4 py-2 text-primary bg-blue-50 rounded-lg font-medium" data-tab="admin-panel">Admin Panel</button>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="text-sm text-slate-500">Welcome, <span data-bind="user.name" data-mock="true">John Doe</span></span>
+                <div class="w-8 h-8 bg-slate-300 rounded-full"></div>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: NavigationHeader -->
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <!-- @COMPONENT: UserMatchesSection -->
+        <div id="user-matches-section" class="tab-content">
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold text-slate-800 mb-2">My Matches</h2>
+                <p class="text-slate-600">View your match results and upload screenshots for verification</p>
+            </div>
+
+            <!-- Match Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- @MAP: userMatches.map(match => ( -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-semibold text-slate-800" data-bind="match.title" data-mock="true">Quarter Finals - Game 1</h3>
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium" data-bind="match.status" data-mock="true">Pending</span>
+                        </div>
+                        
+                        <div class="space-y-3 mb-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-slate-600">Opponent:</span>
+                                <span class="font-medium" data-bind="match.opponent" data-mock="true">Player123</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-slate-600">Date:</span>
+                                <span class="font-medium" data-bind="match.date" data-mock="true">Dec 15, 2024</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-slate-600">Tournament:</span>
+                                <span class="font-medium" data-bind="match.tournament" data-mock="true">Winter Championship</span>
+                            </div>
+                        </div>
+
+                        <button class="w-full bg-primary text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-600 transition-colors" 
+                                data-event="click:openMatchModal" 
+                                data-implementation="Opens match details modal with upload functionality">
+                            View Match
+                        </button>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+        <!-- @END_COMPONENT: UserMatchesSection -->
+
+        <!-- @COMPONENT: TournamentsSection -->
+        <div id="tournaments-section" class="tab-content hidden">
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold text-slate-800 mb-2">Tournaments</h2>
+                <p class="text-slate-600">Browse and join available tournaments</p>
+            </div>
+
+            <!-- Tournament Grid with Fixed Thumbnails -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- @MAP: tournaments.map(tournament => ( -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow">
+                    <!-- Fixed thumbnail display -->
+                    <div class="aspect-video bg-gradient-to-br from-blue-500 to-purple-600 relative overflow-hidden">
+                        <!-- Esports tournament arena with multiple gaming setups -->
+                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=225" 
+                             alt="Tournament thumbnail" 
+                             class="w-full h-full object-cover" 
+                             data-bind="tournament.thumbnail" 
+                             data-implementation="Load from tournament.thumbnailUrl" />
+                        <div class="absolute top-3 right-3">
+                            <span class="px-2 py-1 bg-green-500 text-white rounded-full text-xs font-medium">Live</span>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4">
+                        <h3 class="font-semibold text-slate-800 mb-2" data-bind="tournament.name" data-mock="true">Winter Championship 2024</h3>
+                        <p class="text-sm text-slate-600 mb-4" data-bind="tournament.description" data-mock="true">Competitive tournament featuring the best players from around the region.</p>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-500">Prize Pool:</span>
+                                <span class="font-medium text-green-600" data-bind="tournament.prizePool" data-mock="true">$5,000</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-500">Players:</span>
+                                <span class="font-medium" data-bind="tournament.playerCount" data-mock="true">32/64</span>
+                            </div>
+                            <div class="flex justify-between text-sm">
+                                <span class="text-slate-500">Starts:</span>
+                                <span class="font-medium" data-bind="tournament.startDate" data-mock="true">Dec 20, 2024</span>
+                            </div>
+                        </div>
+
+                        <button class="w-full bg-secondary text-white py-2 px-3 rounded-lg font-medium hover:bg-emerald-600 transition-colors text-sm"
+                                data-event="click:joinTournament">
+                            Join Tournament
+                        </button>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </div>
+        <!-- @END_COMPONENT: TournamentsSection -->
+
+        <!-- @COMPONENT: AdminPanelSection -->
+        <div id="admin-panel-section" class="tab-content">
+            <div class="mb-8">
+                <h2 class="text-2xl font-semibold text-slate-800 mb-2">Admin Panel</h2>
+                <div class="flex space-x-4">
+                    <button class="px-4 py-2 bg-white border border-slate-200 rounded-lg font-medium hover:bg-slate-50 transition-colors admin-tab-btn active" data-admin-tab="match-results">Match Results</button>
+                    <button class="px-4 py-2 bg-white border border-slate-200 rounded-lg font-medium hover:bg-slate-50 transition-colors admin-tab-btn" data-admin-tab="tournament-winners">Tournament Winners</button>
+                </div>
+            </div>
+
+            <!-- Match Results Admin Tab -->
+            <div id="match-results-tab" class="admin-tab-content">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200">
+                    <div class="p-6 border-b border-slate-200">
+                        <h3 class="text-lg font-semibold text-slate-800">Pending Match Results</h3>
+                        <p class="text-slate-600 mt-1">Review uploaded screenshots and declare winners</p>
+                    </div>
+
+                    <div class="divide-y divide-slate-200">
+                        <!-- @MAP: pendingMatches.map(match => ( -->
+                        <div class="p-6 hover:bg-slate-50 transition-colors">
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <div class="lg:col-span-1">
+                                    <h4 class="font-semibold text-slate-800 mb-2" data-bind="match.title" data-mock="true">Semi-Final: Player A vs Player B</h4>
+                                    <div class="space-y-1 text-sm text-slate-600">
+                                        <div>Tournament: <span class="font-medium" data-bind="match.tournament" data-mock="true">Winter Championship</span></div>
+                                        <div>Date: <span class="font-medium" data-bind="match.date" data-mock="true">Dec 14, 2024</span></div>
+                                        <div>Submitted: <span class="font-medium" data-bind="match.submittedAt" data-mock="true">2 hours ago</span></div>
+                                    </div>
+                                </div>
+
+                                <div class="lg:col-span-1">
+                                    <div class="space-y-3">
+                                        <!-- Game result screenshot uploaded by user -->
+                                        <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=300&h=200" 
+                                             alt="Match screenshot" 
+                                             class="w-full h-32 object-cover rounded-lg border border-slate-200 cursor-pointer hover:opacity-90 transition-opacity"
+                                             data-bind="match.screenshotUrl"
+                                             data-implementation="Display uploaded screenshot from user" />
+                                        <p class="text-xs text-slate-500">Screenshot uploaded by: <span data-bind="match.submittedBy" data-mock="true">Player A</span></p>
+                                    </div>
+                                </div>
+
+                                <div class="lg:col-span-1">
+                                    <div class="space-y-3">
+                                        <div class="text-sm font-medium text-slate-700">Declare Winner:</div>
+                                        <div class="space-y-2">
+                                            <button class="w-full px-4 py-2 bg-green-50 border border-green-200 text-green-700 rounded-lg hover:bg-green-100 transition-colors"
+                                                    data-event="click:declareWinner"
+                                                    data-winner-id="player-a">
+                                                <span data-bind="match.playerA" data-mock="true">Player A</span> Wins
+                                            </button>
+                                            <button class="w-full px-4 py-2 bg-green-50 border border-green-200 text-green-700 rounded-lg hover:bg-green-100 transition-colors"
+                                                    data-event="click:declareWinner"
+                                                    data-winner-id="player-b">
+                                                <span data-bind="match.playerB" data-mock="true">Player B</span> Wins
+                                            </button>
+                                            <button class="w-full px-3 py-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors text-sm"
+                                                    data-event="click:requestResubmit">
+                                                Request Resubmit
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tournament Winners Admin Tab -->
+            <div id="tournament-winners-tab" class="admin-tab-content hidden">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200">
+                    <div class="p-6 border-b border-slate-200">
+                        <h3 class="text-lg font-semibold text-slate-800">Tournament Final Rankings</h3>
+                        <p class="text-slate-600 mt-1">Select and finalize tournament winners, runners-up, and third place</p>
+                    </div>
+
+                    <div class="p-6">
+                        <!-- Tournament Selection -->
+                        <div class="mb-8">
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Select Tournament</label>
+                            <select class="w-full md:w-96 px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary" 
+                                    data-bind="selectedTournament"
+                                    data-implementation="Populate from active tournaments">
+                                <option data-mock="true">Winter Championship 2024</option>
+                                <option data-mock="true">Spring Tournament 2024</option>
+                                <option data-mock="true">Summer League Finals</option>
+                            </select>
+                        </div>
+
+                        <!-- Winner Selection Grid -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <!-- Champion -->
+                            <div class="text-center">
+                                <div class="bg-gradient-to-br from-yellow-400 to-yellow-600 w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center">
+                                    <span class="text-white text-2xl font-bold">1st</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-slate-800 mb-2">Champion</h4>
+                                <select class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 mb-4"
+                                        data-bind="tournamentWinner.champion"
+                                        data-implementation="Populate from tournament participants">
+                                    <option value="">Select Champion</option>
+                                    <option data-mock="true">Player Alpha</option>
+                                    <option data-mock="true">Player Beta</option>
+                                    <option data-mock="true">Player Gamma</option>
+                                </select>
+                                <div class="text-sm text-slate-600">
+                                    Prize: <span class="font-medium text-green-600" data-bind="tournament.firstPrize" data-mock="true">$3,000</span>
+                                </div>
+                            </div>
+
+                            <!-- Runner-up -->
+                            <div class="text-center">
+                                <div class="bg-gradient-to-br from-slate-400 to-slate-600 w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center">
+                                    <span class="text-white text-2xl font-bold">2nd</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-slate-800 mb-2">Runner-up</h4>
+                                <select class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-slate-500 focus:border-slate-500 mb-4"
+                                        data-bind="tournamentWinner.runnerUp"
+                                        data-implementation="Populate from tournament participants">
+                                    <option value="">Select Runner-up</option>
+                                    <option data-mock="true">Player Beta</option>
+                                    <option data-mock="true">Player Gamma</option>
+                                    <option data-mock="true">Player Delta</option>
+                                </select>
+                                <div class="text-sm text-slate-600">
+                                    Prize: <span class="font-medium text-green-600" data-bind="tournament.secondPrize" data-mock="true">$1,500</span>
+                                </div>
+                            </div>
+
+                            <!-- Third Place -->
+                            <div class="text-center">
+                                <div class="bg-gradient-to-br from-amber-600 to-amber-800 w-24 h-24 rounded-full mx-auto mb-4 flex items-center justify-center">
+                                    <span class="text-white text-2xl font-bold">3rd</span>
+                                </div>
+                                <h4 class="text-lg font-semibold text-slate-800 mb-2">Third Place</h4>
+                                <select class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 mb-4"
+                                        data-bind="tournamentWinner.thirdPlace"
+                                        data-implementation="Populate from tournament participants">
+                                    <option value="">Select Third Place</option>
+                                    <option data-mock="true">Player Gamma</option>
+                                    <option data-mock="true">Player Delta</option>
+                                    <option data-mock="true">Player Epsilon</option>
+                                </select>
+                                <div class="text-sm text-slate-600">
+                                    Prize: <span class="font-medium text-green-600" data-bind="tournament.thirdPrize" data-mock="true">$500</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Finalize Button -->
+                        <div class="mt-8 text-center">
+                            <button class="px-8 py-3 bg-primary text-white rounded-lg font-semibold hover:bg-blue-600 transition-colors"
+                                    data-event="click:finalizeTournamentWinners"
+                                    data-implementation="Submit final tournament rankings and distribute prizes">
+                                Finalize Tournament Winners
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- @END_COMPONENT: AdminPanelSection -->
+    </div>
+
+    <!-- @COMPONENT: MatchDetailsModal -->
+    <div id="match-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-slate-800" data-bind="selectedMatch.title" data-mock="true">Quarter Finals - Game 1</h3>
+                    <button class="text-slate-400 hover:text-slate-600" data-event="click:closeMatchModal">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-6">
+                <div class="grid grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h4 class="font-semibold text-slate-800 mb-2">Match Details</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate-600">Opponent:</span>
+                                <span class="font-medium" data-bind="selectedMatch.opponent" data-mock="true">Player123</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600">Tournament:</span>
+                                <span class="font-medium" data-bind="selectedMatch.tournament" data-mock="true">Winter Championship</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600">Status:</span>
+                                <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-medium" data-bind="selectedMatch.status" data-mock="true">Pending</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="font-semibold text-slate-800 mb-2">Game Info</h4>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate-600">Date:</span>
+                                <span class="font-medium" data-bind="selectedMatch.date" data-mock="true">Dec 15, 2024</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600">Time:</span>
+                                <span class="font-medium" data-bind="selectedMatch.time" data-mock="true">8:00 PM</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600">Round:</span>
+                                <span class="font-medium" data-bind="selectedMatch.round" data-mock="true">Quarter Finals</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Upload Section -->
+                <div class="border border-slate-200 rounded-lg p-6">
+                    <h4 class="font-semibold text-slate-800 mb-4">Upload Match Result Screenshot</h4>
+                    <div class="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center hover:border-primary transition-colors" 
+                         data-implementation="Implement drag & drop file upload">
+                        <svg class="mx-auto h-12 w-12 text-slate-400 mb-4" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <div class="text-slate-600">
+                            <span class="font-medium text-primary cursor-pointer hover:text-blue-600">Click to upload</span>
+                            <span> or drag and drop</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-2">PNG, JPG, GIF up to 10MB</p>
+                        <input type="file" class="hidden" accept="image/*" data-implementation="Handle file upload and preview">
+                    </div>
+
+                    <div class="mt-4 flex items-center space-x-4">
+                        <button class="flex-1 bg-primary text-white py-3 px-6 rounded-lg font-medium hover:bg-blue-600 transition-colors"
+                                data-event="click:uploadScreenshot"
+                                data-implementation="Upload screenshot and submit for admin review">
+                            Upload & Submit for Review
+                        </button>
+                        <button class="px-6 py-3 border border-slate-200 text-slate-600 rounded-lg font-medium hover:bg-slate-50 transition-colors"
+                                data-event="click:closeMatchModal">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: MatchDetailsModal -->
+
+    <script>
+        (function() {
+            // Tab switching functionality
+            const tabButtons = document.querySelectorAll('[data-tab]');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const adminTabButtons = document.querySelectorAll('.admin-tab-btn');
+            const adminTabContents = document.querySelectorAll('.admin-tab-content');
+
+            function showTab(tabName) {
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                const targetTab = document.getElementById(tabName + '-section');
+                if (targetTab) {
+                    targetTab.classList.remove('hidden');
+                }
+
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('text-primary', 'bg-blue-50');
+                    btn.classList.add('text-slate-600');
+                });
+
+                const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+                if (activeBtn) {
+                    activeBtn.classList.add('text-primary', 'bg-blue-50');
+                    activeBtn.classList.remove('text-slate-600');
+                }
+            }
+
+            function showAdminTab(tabName) {
+                adminTabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                const targetTab = document.getElementById(tabName + '-tab');
+                if (targetTab) {
+                    targetTab.classList.remove('hidden');
+                }
+
+                adminTabButtons.forEach(btn => {
+                    btn.classList.remove('active', 'bg-primary', 'text-white');
+                });
+
+                const activeBtn = document.querySelector(`[data-admin-tab="${tabName}"]`);
+                if (activeBtn) {
+                    activeBtn.classList.add('active', 'bg-primary', 'text-white');
+                }
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabName = button.getAttribute('data-tab');
+                    showTab(tabName);
+                });
+            });
+
+            adminTabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabName = button.getAttribute('data-admin-tab');
+                    showAdminTab(tabName);
+                });
+            });
+
+            // Modal functionality
+            const modal = document.getElementById('match-modal');
+            const viewMatchButtons = document.querySelectorAll('[data-event="click:openMatchModal"]');
+            const closeModalButtons = document.querySelectorAll('[data-event="click:closeMatchModal"]');
+
+            viewMatchButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                });
+            });
+
+            closeModalButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                });
+            });
+
+            // Close modal when clicking backdrop
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            });
+
+            // Initialize default tab
+            showTab('admin-panel');
+            showAdminTab('match-results');
+
+            // TODO: Implement file upload functionality
+            // TODO: Implement match result submission
+            // TODO: Implement admin winner selection
+            // TODO: Implement tournament winner finalization
+            // TODO: Connect to backend APIs for data persistence
+            // TODO: Add real-time notifications for match updates
+            // TODO: Implement user authentication and authorization
+        })();
+    </script>
+</body>
+</html>

@@ -383,7 +383,12 @@ if ($flash) {
                                     </div>
                                 </div>
                                 <div class="alert alert-info">
-                                    <i class="fas fa-info-circle"></i> <strong>Note:</strong> Prize money will be automatically added to winners' wallets when tournament results are published. Players can then withdraw their earnings.
+                                    <i class="fas fa-info-circle"></i> <strong>Note:</strong> 
+                                    <ul class="mb-0 mt-2">
+                                        <li>Prize money is optional - leave blank if no monetary prizes</li>
+                                        <li>When tournament results are published, prize money will be automatically added to winners' wallets</li>
+                                        <li>Players can then withdraw their earnings through the withdrawal system</li>
+                                    </ul>
                                 </div>
                             </div>
                             
