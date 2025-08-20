@@ -242,8 +242,14 @@ if ($flash) {
                 <?php if ($tournament['status'] !== 'completed'): ?>
                 <div class="gaming-card mt-4">
                     <h4 class="text-accent mb-3">
-                        <i class="fas fa-clipboard-list"></i> Publish Tournament Results
+                        <i class="fas fa-clipboard-list"></i> Publish Final Tournament Results
                     </h4>
+                    
+                    <div class="alert alert-warning mb-4">
+                        <h6 class="text-warning"><i class="fas fa-exclamation-triangle"></i> Important:</h6>
+                        <p class="mb-2">This page is for selecting the <strong>overall tournament winners</strong> (Champion, Runner-up, 3rd Place) - the final tournament ranking.</p>
+                        <p class="mb-0">For individual match results and screenshot reviews, use the <a href="results.php" class="text-accent">Match Results</a> page.</p>
+                    </div>
                     
                     <form method="POST">
                         <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">

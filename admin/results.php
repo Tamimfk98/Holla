@@ -73,11 +73,15 @@ if ($action === 'update' && $matchId) {
     $stmt = $pdo->prepare("
         SELECT m.*, t.name as tournament_name,
                u1.username as team1_name, u1.full_name as team1_fullname,
-               u2.username as team2_name, u2.full_name as team2_fullname
+               u2.username as team2_name, u2.full_name as team2_fullname,
+               ms1.screenshot_url as team1_screenshot, ms1.uploaded_at as team1_upload_time,
+               ms2.screenshot_url as team2_screenshot, ms2.uploaded_at as team2_upload_time
         FROM matches m
         JOIN tournaments t ON m.tournament_id = t.id
         JOIN users u1 ON m.team1_id = u1.id
         JOIN users u2 ON m.team2_id = u2.id
+        LEFT JOIN match_screenshots ms1 ON m.id = ms1.match_id AND ms1.team_id = u1.id
+        LEFT JOIN match_screenshots ms2 ON m.id = ms2.match_id AND ms2.team_id = u2.id
         WHERE m.id = ?
     ");
     $stmt->execute([$matchId]);
@@ -331,6 +335,55 @@ if ($flash) {
                             </div>
                         </div>
                         
+                        <!-- Screenshots Section -->
+                        <?php if ($match['team1_screenshot'] || $match['team2_screenshot']): ?>
+                        <div class="gaming-card mb-4">
+                            <h6 class="text-accent mb-3">
+                                <i class="fas fa-images"></i> Uploaded Screenshots
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h6 class="text-light">Team 1: <?= htmlspecialchars($match['team1_name']) ?></h6>
+                                    <?php if ($match['team1_screenshot']): ?>
+                                        <div class="screenshot-container mb-2">
+                                            <img src="../<?= htmlspecialchars($match['team1_screenshot']) ?>" 
+                                                 alt="Team 1 Screenshot" 
+                                                 class="img-fluid rounded border" 
+                                                 style="max-height: 300px; cursor: pointer;" 
+                                                 onclick="openScreenshotModal(this.src, 'Team 1 Screenshot')">
+                                        </div>
+                                        <small class="text-light-50">
+                                            <i class="fas fa-clock"></i> Uploaded: <?= formatDate($match['team1_upload_time']) ?>
+                                        </small>
+                                    <?php else: ?>
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle"></i> No screenshot uploaded
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-light">Team 2: <?= htmlspecialchars($match['team2_name']) ?></h6>
+                                    <?php if ($match['team2_screenshot']): ?>
+                                        <div class="screenshot-container mb-2">
+                                            <img src="../<?= htmlspecialchars($match['team2_screenshot']) ?>" 
+                                                 alt="Team 2 Screenshot" 
+                                                 class="img-fluid rounded border" 
+                                                 style="max-height: 300px; cursor: pointer;" 
+                                                 onclick="openScreenshotModal(this.src, 'Team 2 Screenshot')">
+                                        </div>
+                                        <small class="text-light-50">
+                                            <i class="fas fa-clock"></i> Uploaded: <?= formatDate($match['team2_upload_time']) ?>
+                                        </small>
+                                    <?php else: ?>
+                                        <div class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle"></i> No screenshot uploaded
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+                        
                         <form method="POST">
                             <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                             
@@ -372,9 +425,16 @@ if ($flash) {
                                           placeholder="Any additional notes about the match result"><?= htmlspecialchars($match['notes'] ?? '') ?></textarea>
                             </div>
                             
+                            <div class="alert alert-info">
+                                <h6 class="text-info"><i class="fas fa-info-circle"></i> Important Note:</h6>
+                                <p class="mb-0">This sets the winner for this <strong>individual match</strong> only. 
+                                To set the overall tournament winners (Champion, Runner-up, 3rd Place), go to 
+                                <a href="tournament_results.php" class="text-accent">Tournament Results</a> page.</p>
+                            </div>
+                            
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-accent">
-                                    <i class="fas fa-save"></i> Update Result
+                                    <i class="fas fa-save"></i> Update Match Result
                                 </button>
                                 <a href="results.php" class="btn btn-secondary">
                                     <i class="fas fa-arrow-left"></i> Back to List
@@ -387,7 +447,29 @@ if ($flash) {
         </div>
     </div>
     
+    <!-- Screenshot Modal -->
+    <div class="modal fade" id="screenshotModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content bg-dark">
+                <div class="modal-header border-secondary">
+                    <h5 class="modal-title text-light" id="screenshotModalLabel">Screenshot</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="screenshotModalImg" src="" alt="Screenshot" class="img-fluid rounded">
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="../assets/js/main.js"></script>
+    <script>
+        function openScreenshotModal(src, title) {
+            document.getElementById('screenshotModalImg').src = src;
+            document.getElementById('screenshotModalLabel').textContent = title;
+            new bootstrap.Modal(document.getElementById('screenshotModal')).show();
+        }
+    </script>
 </body>
 </html>

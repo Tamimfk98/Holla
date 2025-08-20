@@ -107,7 +107,7 @@ if ($action === 'list') {
         LEFT JOIN tournament_registrations tr ON t.id = tr.tournament_id AND tr.status = 'approved'
         LEFT JOIN tournament_registrations utr ON t.id = utr.tournament_id AND utr.user_id = ?
         $whereClause
-        GROUP BY t.id, t.name, t.description, t.game_type, t.max_teams, t.entry_fee, t.prize_pool, t.start_date, t.end_date, t.status, t.created_at, t.updated_at
+        GROUP BY t.id, t.name, t.description, t.game_type, t.max_teams, t.entry_fee, t.prize_pool, t.start_date, t.end_date, t.status, t.thumbnail, t.created_at, t.updated_at
         ORDER BY t.start_date ASC, t.created_at DESC
     ");
     $params = array_merge([$_SESSION['user_id']], $params);
