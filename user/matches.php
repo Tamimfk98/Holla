@@ -39,13 +39,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_screenshot']))
                 if (move_uploaded_file($_FILES['screenshot']['tmp_name'], $uploadPath)) {
                     // Save to database
                     try {
+                        // Check if screenshot already exists
                         $stmt = $pdo->prepare("
-                            INSERT INTO match_screenshots (match_id, team_id, screenshot_url, uploaded_at)
-                            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
-                            ON CONFLICT (match_id, team_id) 
-                            DO UPDATE SET screenshot_url = EXCLUDED.screenshot_url, uploaded_at = EXCLUDED.uploaded_at
+                            SELECT id FROM match_screenshots 
+                            WHERE match_id = ? AND team_id = ?
                         ");
-                        $stmt->execute([$uploadMatchId, $_SESSION['user_id'], $screenshotPath]);
+                        $stmt->execute([$uploadMatchId, $_SESSION['user_id']]);
+                        
+                        if ($stmt->fetch()) {
+                            // Update existing screenshot
+                            $stmt = $pdo->prepare("
+                                UPDATE match_screenshots 
+                                SET screenshot_url = ?, uploaded_at = CURRENT_TIMESTAMP
+                                WHERE match_id = ? AND team_id = ?
+                            ");
+                            $stmt->execute([$screenshotPath, $uploadMatchId, $_SESSION['user_id']]);
+                        } else {
+                            // Insert new screenshot
+                            $stmt = $pdo->prepare("
+                                INSERT INTO match_screenshots (match_id, team_id, screenshot_url, uploaded_at)
+                                VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+                            ");
+                            $stmt->execute([$uploadMatchId, $_SESSION['user_id'], $screenshotPath]);
+                        }
+                        
+                        // Also update matches table for quick access
+                        $isTeam1 = false;
+                        $stmt = $pdo->prepare("SELECT team1_id FROM matches WHERE id = ?");
+                        $stmt->execute([$uploadMatchId]);
+                        $matchData = $stmt->fetch();
+                        $isTeam1 = ($matchData['team1_id'] == $_SESSION['user_id']);
+                        
+                        if ($isTeam1) {
+                            $stmt = $pdo->prepare("
+                                UPDATE matches 
+                                SET team1_screenshot = ?, team1_upload_time = CURRENT_TIMESTAMP
+                                WHERE id = ?
+                            ");
+                            $stmt->execute([$screenshotPath, $uploadMatchId]);
+                        } else {
+                            $stmt = $pdo->prepare("
+                                UPDATE matches 
+                                SET team2_screenshot = ?, team2_upload_time = CURRENT_TIMESTAMP
+                                WHERE id = ?
+                            ");
+                            $stmt->execute([$screenshotPath, $uploadMatchId]);
+                        }
                         $success = 'Screenshot uploaded successfully!';
                     } catch (PDOException $e) {
                         $error = 'Failed to save screenshot: ' . $e->getMessage();

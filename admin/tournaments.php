@@ -272,10 +272,20 @@ if ($flash) {
                 <?php elseif ($action === 'create' || $action === 'edit'): ?>
                     <!-- Tournament Form -->
                     <div class="gaming-card">
+                        <h4 class="text-accent mb-4">
+                            <i class="fas fa-<?= $action === 'create' ? 'plus' : 'edit' ?>"></i> 
+                            <?= $action === 'create' ? 'Create New Tournament' : 'Edit Tournament' ?>
+                        </h4>
+                        
                         <form method="POST" enctype="multipart/form-data">
                             <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                             
-                            <div class="row">
+                            <!-- Basic Information -->
+                            <div class="gaming-card mb-4">
+                                <h5 class="text-accent mb-3">
+                                    <i class="fas fa-info-circle"></i> Basic Information
+                                </h5>
+                                <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label for="name" class="form-label text-light">Tournament Name *</label>
                                     <input type="text" class="form-control gaming-input" id="name" name="name" 
@@ -295,13 +305,13 @@ if ($flash) {
                                 </div>
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="description" class="form-label text-light">Description</label>
-                                <textarea class="form-control gaming-input" id="description" name="description" rows="4"><?= htmlspecialchars($tournament['description'] ?? '') ?></textarea>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="thumbnail" class="form-label text-light">Tournament Thumbnail</label>
+                                <div class="col-12 mb-3">
+                                    <label for="description" class="form-label text-light">Description</label>
+                                    <textarea class="form-control gaming-input" id="description" name="description" rows="4"><?= htmlspecialchars($tournament['description'] ?? '') ?></textarea>
+                                </div>
+                                
+                                <div class="col-12 mb-3">
+                                    <label for="thumbnail" class="form-label text-light">Tournament Thumbnail</label>
                                 <?php if (!empty($tournament['thumbnail'])): ?>
                                     <div class="mb-2">
                                         <img src="../<?= htmlspecialchars($tournament['thumbnail']) ?>" alt="Current thumbnail" 
@@ -309,12 +319,19 @@ if ($flash) {
                                         <p class="text-light-50 small mb-0">Current thumbnail</p>
                                     </div>
                                 <?php endif; ?>
-                                <input type="file" class="form-control gaming-input" id="thumbnail" name="thumbnail" 
-                                       accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
-                                <div class="form-text text-light-50">Upload an image for the tournament (max 5MB). Supported formats: JPG, PNG, GIF, WebP</div>
+                                    <input type="file" class="form-control gaming-input" id="thumbnail" name="thumbnail" 
+                                           accept="image/jpeg,image/jpg,image/png,image/gif,image/webp">
+                                    <div class="form-text text-light-50">Upload an image for the tournament (max 5MB). Supported formats: JPG, PNG, GIF, WebP</div>
+                                </div>
+                            </div>
                             </div>
                             
-                            <div class="row">
+                            <!-- Tournament Settings -->
+                            <div class="gaming-card mb-4">
+                                <h5 class="text-accent mb-3">
+                                    <i class="fas fa-cogs"></i> Tournament Settings
+                                </h5>
+                                <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label for="max_teams" class="form-label text-light">Max Teams *</label>
                                     <input type="number" class="form-control gaming-input" id="max_teams" name="max_teams" 
@@ -331,6 +348,7 @@ if ($flash) {
                                     <label for="prize_pool" class="form-label text-light">Total Prize Pool (৳)</label>
                                     <input type="number" class="form-control gaming-input" id="prize_pool" name="prize_pool" 
                                            value="<?= $tournament['prize_pool'] ?? '' ?>" min="0" step="0.01">
+                                </div>
                                 </div>
                             </div>
                             
@@ -368,22 +386,13 @@ if ($flash) {
                                     <i class="fas fa-info-circle"></i> <strong>Note:</strong> Prize money will be automatically added to winners' wallets when tournament results are published. Players can then withdraw their earnings.
                                 </div>
                             </div>
-                                    </div>
-                                    
-                                    <div class="col-md-4 mb-3">
-                                        <label for="third_place_prize" class="form-label text-light">3rd Place Prize (৳)</label>
-                                        <input type="number" class="form-control gaming-input" id="third_place_prize" name="third_place_prize" 
-                                               value="<?= $tournament['third_place_prize'] ?? '' ?>" min="0" step="0.01"
-                                               placeholder="Third place prize amount">
-                                        <div class="form-text text-light-50">Prize money for third place</div>
-                                    </div>
-                                </div>
-                                <div class="alert alert-info">
-                                    <i class="fas fa-info-circle"></i> <strong>Note:</strong> Prize money will be automatically added to winners' wallets when tournament results are published. Players can then withdraw their earnings.
-                                </div>
-                            </div>
                             
-                            <div class="row">
+                            <!-- Schedule & Status -->
+                            <div class="gaming-card mb-4">
+                                <h5 class="text-accent mb-3">
+                                    <i class="fas fa-calendar"></i> Schedule & Status
+                                </h5>
+                                <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label for="start_date" class="form-label text-light">Start Date</label>
                                     <input type="datetime-local" class="form-control gaming-input" id="start_date" name="start_date" 
@@ -405,9 +414,10 @@ if ($flash) {
                                         <option value="cancelled" <?= ($tournament['status'] ?? '') === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
                                     </select>
                                 </div>
+                                </div>
                             </div>
                             
-                            <div class="text-end">
+                            <div class="text-center">
                                 <button type="submit" class="btn btn-accent">
                                     <i class="fas fa-save"></i> <?= $action === 'create' ? 'Create' : 'Update' ?> Tournament
                                 </button>
