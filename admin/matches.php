@@ -44,6 +44,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $score2 = (int)($_POST['score2'] ?? 0);
                 $notes = sanitizeInput($_POST['notes'] ?? '');
                 
+                // Debug logging
+                error_log("Update result - Match ID: " . $matchId . ", Winner ID: " . $winnerId . ", Score1: " . $score1 . ", Score2: " . $score2);
+                
                 if ($matchId && $winnerId) {
                     try {
                         $stmt = $pdo->prepare("
@@ -54,6 +57,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         $stmt->execute([$winnerId, $score1, $score2, $notes, $matchId]);
                         $success = 'Match result updated successfully';
                         $action = 'list';
+                        
+                        // Create notifications for both teams
+                        $stmt = $pdo->prepare("
+                            SELECT team1_id, team2_id 
+                            FROM matches 
+                            WHERE id = ?
+                        ");
+                        $stmt->execute([$matchId]);
+                        $match = $stmt->fetch();
+                        
+                        if ($match) {
+                            $winnerMessage = "Congratulations! You won your match.";
+                            $loserMessage = "Your match result has been updated. Better luck next time!";
+                            
+                            // Notify winner
+                            $stmt = $pdo->prepare("
+                                INSERT INTO notifications (user_id, title, message, type, created_at)
+                                VALUES (?, 'Match Result', ?, 'success', CURRENT_TIMESTAMP)
+                            ");
+                            $stmt->execute([$winnerId, $winnerMessage]);
+                            
+                            // Notify loser
+                            $loserId = $winnerId == $match['team1_id'] ? $match['team2_id'] : $match['team1_id'];
+                            $stmt = $pdo->prepare("
+                                INSERT INTO notifications (user_id, title, message, type, created_at)
+                                VALUES (?, 'Match Result', ?, 'info', CURRENT_TIMESTAMP)
+                            ");
+                            $stmt->execute([$loserId, $loserMessage]);
+                        }
                     } catch (PDOException $e) {
                         $error = 'Database error: ' . $e->getMessage();
                     }
@@ -382,7 +414,7 @@ if ($flash) {
                         </div>
                         <?php endif; ?>
                         
-                        <form method="POST">
+                        <form method="POST" action="?action=update_result&id=<?= $match['id'] ?>">
                             <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                             
                             <div class="row">
