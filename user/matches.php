@@ -545,34 +545,54 @@ if ($flash) {
                             <?php 
                             $userScreenshot = ($match['team1_id'] == $userId) ? $match['team1_screenshot'] : $match['team2_screenshot'];
                             if (!$userScreenshot): ?>
-                                <div class="gaming-card">
-                                    <h5 class="text-warning mb-3">
-                                        <i class="fas fa-upload"></i> Upload Your Screenshot
-                                    </h5>
+                                <div class="gaming-card border-warning">
+                                    <div class="text-center mb-3">
+                                        <i class="fas fa-upload fa-3x text-warning mb-2"></i>
+                                        <h4 class="text-warning mb-1">Upload Your Match Screenshot</h4>
+                                        <p class="text-light-50">Required to complete your match submission</p>
+                                    </div>
+                                    
                                     <form method="POST" enctype="multipart/form-data" class="upload-form">
                                         <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                                         <input type="hidden" name="match_id" value="<?= $match['id'] ?>">
                                         
-                                        <div class="mb-3">
-                                            <label class="form-label text-light">
-                                                <i class="fas fa-image text-accent"></i> Match Result Screenshot
+                                        <div class="mb-4">
+                                            <label class="form-label text-light fw-bold">
+                                                <i class="fas fa-image text-accent"></i> Select Match Result Screenshot
                                             </label>
-                                            <input type="file" class="form-control gaming-input" 
+                                            <input type="file" class="form-control gaming-input form-control-lg" 
                                                    name="screenshot" accept="image/*" required>
                                             <div class="form-text text-light-50">
-                                                Upload a clear screenshot showing your match results (Max 5MB)
+                                                <i class="fas fa-info-circle"></i> Upload a clear screenshot showing your match results. 
+                                                Supported formats: JPG, PNG, GIF, WebP (Max 5MB)
                                             </div>
                                         </div>
                                         
-                                        <button type="submit" name="upload_screenshot" class="btn btn-warning w-100">
-                                            <i class="fas fa-cloud-upload-alt"></i> Upload Screenshot
+                                        <div class="alert alert-info">
+                                            <h6><i class="fas fa-lightbulb"></i> Upload Tips:</h6>
+                                            <ul class="mb-0 small">
+                                                <li>Ensure your screenshot clearly shows the match results</li>
+                                                <li>Include your team name and score if visible</li>
+                                                <li>Make sure the image is not blurry or cropped</li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <button type="submit" name="upload_screenshot" class="btn btn-warning btn-lg w-100">
+                                            <i class="fas fa-cloud-upload-alt"></i> Upload Screenshot Now
                                         </button>
                                     </form>
                                 </div>
                             <?php else: ?>
-                                <div class="alert alert-success text-center">
-                                    <i class="fas fa-check-circle fa-2x mb-2"></i>
-                                    <h6>Screenshot Uploaded Successfully!</h6>
+                                <div class="gaming-card border-success">
+                                    <div class="alert alert-success text-center mb-0">
+                                        <i class="fas fa-check-circle fa-3x mb-2"></i>
+                                        <h5>Screenshot Uploaded Successfully!</h5>
+                                        <p class="mb-2">Your screenshot has been submitted for admin review</p>
+                                        <a href="../<?= htmlspecialchars($userScreenshot) ?>" target="_blank" class="btn btn-outline-success btn-sm">
+                                            <i class="fas fa-eye"></i> View Uploaded Screenshot
+                                        </a>
+                                    </div>
+                                </div>
                                     <small>Your screenshot has been submitted for this match.</small>
                                 </div>
                             <?php endif; ?>

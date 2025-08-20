@@ -105,15 +105,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Get registered users for this tournament
+// Get registered users for this tournament with match statistics
 $stmt = $pdo->prepare("
-    SELECT u.id, u.username, u.full_name, tr.team_name 
+    SELECT u.id, u.username, u.full_name, tr.team_name,
+           COUNT(CASE WHEN m.winner_id = u.id THEN 1 END) as matches_won,
+           COUNT(CASE WHEN (m.team1_id = u.id OR m.team2_id = u.id) AND m.status = 'completed' THEN 1 END) as total_matches,
+           COALESCE(SUM(CASE WHEN m.team1_id = u.id THEN m.score1 WHEN m.team2_id = u.id THEN m.score2 END), 0) as total_score
     FROM users u 
     JOIN tournament_registrations tr ON u.id = tr.user_id 
+    LEFT JOIN matches m ON (m.team1_id = u.id OR m.team2_id = u.id) AND m.tournament_id = ?
     WHERE tr.tournament_id = ? AND tr.status = 'approved'
-    ORDER BY u.username
+    GROUP BY u.id, u.username, u.full_name, tr.team_name
+    ORDER BY matches_won DESC, total_score DESC, u.username
 ");
-$stmt->execute([$tournamentId]);
+$stmt->execute([$tournamentId, $tournamentId]);
 $registeredUsers = $stmt->fetchAll();
 
 $flash = getFlashMessage();
@@ -337,6 +342,96 @@ if ($flash) {
                     </form>
                 </div>
                 <?php endif; ?>
+                
+                <!-- Tournament Performance Graph -->
+                <div class="gaming-card mt-4">
+                    <h4 class="text-accent mb-3">
+                        <i class="fas fa-chart-bar"></i> Tournament Performance Graph
+                    </h4>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Player</th>
+                                    <th>Team Name</th>
+                                    <th>Matches Won</th>
+                                    <th>Total Matches</th>
+                                    <th>Win Rate</th>
+                                    <th>Total Score</th>
+                                    <th>Performance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($registeredUsers as $index => $user): ?>
+                                    <?php 
+                                    $winRate = $user['total_matches'] > 0 ? ($user['matches_won'] / $user['total_matches']) * 100 : 0;
+                                    $isWinner = isset($tournament['winner_id']) && $tournament['winner_id'] == $user['id'];
+                                    $isRunnerUp = isset($tournament['runner_up_id']) && $tournament['runner_up_id'] == $user['id'];
+                                    $isThirdPlace = isset($tournament['third_place_id']) && $tournament['third_place_id'] == $user['id'];
+                                    ?>
+                                    <tr class="<?= $isWinner ? 'table-warning' : ($isRunnerUp ? 'table-info' : ($isThirdPlace ? 'table-secondary' : '')) ?>">
+                                        <td>
+                                            <span class="badge bg-<?= $isWinner ? 'warning' : ($isRunnerUp ? 'info' : ($isThirdPlace ? 'secondary' : 'dark')) ?>">
+                                                #<?= $index + 1 ?>
+                                            </span>
+                                            <?php if ($isWinner): ?>
+                                                <i class="fas fa-crown text-warning ms-1"></i>
+                                            <?php elseif ($isRunnerUp): ?>
+                                                <i class="fas fa-medal text-info ms-1"></i>
+                                            <?php elseif ($isThirdPlace): ?>
+                                                <i class="fas fa-award text-secondary ms-1"></i>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <strong><?= htmlspecialchars($user['full_name']) ?></strong><br>
+                                            <small class="text-light-50">@<?= htmlspecialchars($user['username']) ?></small>
+                                        </td>
+                                        <td><?= htmlspecialchars($user['team_name']) ?></td>
+                                        <td>
+                                            <span class="badge bg-success"><?= $user['matches_won'] ?></span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-info"><?= $user['total_matches'] ?></span>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="progress flex-fill me-2" style="height: 20px;">
+                                                    <div class="progress-bar bg-<?= $winRate >= 70 ? 'success' : ($winRate >= 40 ? 'warning' : 'danger') ?>" 
+                                                         style="width: <?= $winRate ?>%"></div>
+                                                </div>
+                                                <small><?= round($winRate, 1) ?>%</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-warning"><?= $user['total_score'] ?></span>
+                                        </td>
+                                        <td>
+                                            <?php if ($winRate >= 80): ?>
+                                                <span class="badge bg-success">Excellent</span>
+                                            <?php elseif ($winRate >= 60): ?>
+                                                <span class="badge bg-warning">Good</span>
+                                            <?php elseif ($winRate >= 40): ?>
+                                                <span class="badge bg-info">Average</span>
+                                            <?php else: ?>
+                                                <span class="badge bg-danger">Needs Improvement</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <?php if (empty($registeredUsers)): ?>
+                        <div class="text-center text-light-50 py-4">
+                            <i class="fas fa-users fa-3x mb-3"></i>
+                            <h5>No Registered Players</h5>
+                            <p>No players have registered for this tournament yet.</p>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </main>
         </div>
     </div>

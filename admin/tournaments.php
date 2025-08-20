@@ -21,6 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $maxTeams = (int)($_POST['max_teams'] ?? 0);
                 $entryFee = (float)($_POST['entry_fee'] ?? 0);
                 $prizePool = (float)($_POST['prize_pool'] ?? 0);
+                $winnerPrize = (float)($_POST['winner_prize'] ?? 0);
+                $runnerUpPrize = (float)($_POST['runner_up_prize'] ?? 0);
+                $thirdPlacePrize = (float)($_POST['third_place_prize'] ?? 0);
                 $startDate = $_POST['start_date'] ?? '';
                 $endDate = $_POST['end_date'] ?? '';
                 $status = sanitizeInput($_POST['status'] ?? 'upcoming');
@@ -58,28 +61,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         if ($action === 'create') {
                             $stmt = $pdo->prepare("
                                 INSERT INTO tournaments (name, description, game_type, max_teams, 
-                                                       entry_fee, prize_pool, start_date, end_date, status, thumbnail, created_at)
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+                                                       entry_fee, prize_pool, winner_prize, runner_up_prize, third_place_prize,
+                                                       start_date, end_date, status, thumbnail, created_at)
+                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
                             ");
-                            $stmt->execute([$name, $description, $gameType, $maxTeams, $entryFee, $prizePool, $startDate, $endDate, $status, $thumbnailPath]);
+                            $stmt->execute([$name, $description, $gameType, $maxTeams, $entryFee, $prizePool, $winnerPrize, $runnerUpPrize, $thirdPlacePrize, $startDate, $endDate, $status, $thumbnailPath]);
                             $success = 'Tournament created successfully';
                         } else {
                             if ($thumbnailPath) {
                                 $stmt = $pdo->prepare("
                                     UPDATE tournaments 
                                     SET name = ?, description = ?, game_type = ?, max_teams = ?, 
-                                        entry_fee = ?, prize_pool = ?, start_date = ?, end_date = ?, status = ?, thumbnail = ?
+                                        entry_fee = ?, prize_pool = ?, winner_prize = ?, runner_up_prize = ?, third_place_prize = ?,
+                                        start_date = ?, end_date = ?, status = ?, thumbnail = ?
                                     WHERE id = ?
                                 ");
-                                $stmt->execute([$name, $description, $gameType, $maxTeams, $entryFee, $prizePool, $startDate, $endDate, $status, $thumbnailPath, $tournamentId]);
+                                $stmt->execute([$name, $description, $gameType, $maxTeams, $entryFee, $prizePool, $winnerPrize, $runnerUpPrize, $thirdPlacePrize, $startDate, $endDate, $status, $thumbnailPath, $tournamentId]);
                             } else {
                                 $stmt = $pdo->prepare("
                                     UPDATE tournaments 
                                     SET name = ?, description = ?, game_type = ?, max_teams = ?, 
-                                        entry_fee = ?, prize_pool = ?, start_date = ?, end_date = ?, status = ?
+                                        entry_fee = ?, prize_pool = ?, winner_prize = ?, runner_up_prize = ?, third_place_prize = ?,
+                                        start_date = ?, end_date = ?, status = ?
                                     WHERE id = ?
                                 ");
-                                $stmt->execute([$name, $description, $gameType, $maxTeams, $entryFee, $prizePool, $startDate, $endDate, $status, $tournamentId]);
+                                $stmt->execute([$name, $description, $gameType, $maxTeams, $entryFee, $prizePool, $winnerPrize, $runnerUpPrize, $thirdPlacePrize, $startDate, $endDate, $status, $tournamentId]);
                             }
                             $success = 'Tournament updated successfully';
                         }
