@@ -105,6 +105,10 @@ $stmt = $pdo->prepare("
 $stmt->execute([$_SESSION['user_id'], $_SESSION['user_id'], $_SESSION['user_id'], $_SESSION['user_id']]);
 $availableMatches = $stmt->fetchAll();
 
+// Debug: Add logging to see what's happening
+error_log("Upload.php Debug - User ID: " . $_SESSION['user_id']);
+error_log("Upload.php Debug - Available matches count: " . count($availableMatches));
+
 // Get match details if match_id is provided
 $selectedMatch = null;
 if ($matchId) {

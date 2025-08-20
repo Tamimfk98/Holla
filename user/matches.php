@@ -14,10 +14,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_screenshot']))
     } else {
         $uploadMatchId = (int)($_POST['match_id'] ?? 0);
         
-        // Verify user is part of this match
+        // Verify user is part of this match and it's active
         $stmt = $pdo->prepare("
             SELECT id FROM matches 
-            WHERE id = ? AND (team1_id = ? OR team2_id = ?)
+            WHERE id = ? AND (team1_id = ? OR team2_id = ?) 
+            AND status IN ('active', 'live', 'scheduled')
         ");
         $stmt->execute([$uploadMatchId, $_SESSION['user_id'], $_SESSION['user_id']]);
         $validMatch = $stmt->fetch();
