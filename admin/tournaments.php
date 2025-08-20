@@ -322,9 +322,58 @@ if ($flash) {
                                 </div>
                                 
                                 <div class="col-md-4 mb-3">
-                                    <label for="prize_pool" class="form-label text-light">Prize Pool (৳)</label>
+                                    <label for="prize_pool" class="form-label text-light">Total Prize Pool (৳)</label>
                                     <input type="number" class="form-control gaming-input" id="prize_pool" name="prize_pool" 
                                            value="<?= $tournament['prize_pool'] ?? '' ?>" min="0" step="0.01">
+                                </div>
+                            </div>
+                            
+                            <!-- Prize Distribution Section -->
+                            <div class="gaming-card mb-4">
+                                <h5 class="text-accent mb-3">
+                                    <i class="fas fa-trophy"></i> Prize Distribution
+                                </h5>
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="winner_prize" class="form-label text-light">1st Place Prize (৳)</label>
+                                        <input type="number" class="form-control gaming-input" id="winner_prize" name="winner_prize" 
+                                               value="<?= $tournament['winner_prize'] ?? '' ?>" min="0" step="0.01"
+                                               placeholder="Champion prize amount">
+                                        <div class="form-text text-light-50">Prize money for tournament champion</div>
+                                    </div>
+                                    
+                                    <div class="col-md-4 mb-3">
+                                        <label for="runner_up_prize" class="form-label text-light">2nd Place Prize (৳)</label>
+                                        <input type="number" class="form-control gaming-input" id="runner_up_prize" name="runner_up_prize" 
+                                               value="<?= $tournament['runner_up_prize'] ?? '' ?>" min="0" step="0.01"
+                                               placeholder="Runner-up prize amount">
+                                        <div class="form-text text-light-50">Prize money for runner-up</div>
+                                    </div>
+                                    
+                                    <div class="col-md-4 mb-3">
+                                        <label for="third_place_prize" class="form-label text-light">3rd Place Prize (৳)</label>
+                                        <input type="number" class="form-control gaming-input" id="third_place_prize" name="third_place_prize" 
+                                               value="<?= $tournament['third_place_prize'] ?? '' ?>" min="0" step="0.01"
+                                               placeholder="Third place prize amount">
+                                        <div class="form-text text-light-50">Prize money for third place</div>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> <strong>Note:</strong> Prize money will be automatically added to winners' wallets when tournament results are published. Players can then withdraw their earnings.
+                                </div>
+                            </div>
+                                    </div>
+                                    
+                                    <div class="col-md-4 mb-3">
+                                        <label for="third_place_prize" class="form-label text-light">3rd Place Prize (৳)</label>
+                                        <input type="number" class="form-control gaming-input" id="third_place_prize" name="third_place_prize" 
+                                               value="<?= $tournament['third_place_prize'] ?? '' ?>" min="0" step="0.01"
+                                               placeholder="Third place prize amount">
+                                        <div class="form-text text-light-50">Prize money for third place</div>
+                                    </div>
+                                </div>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> <strong>Note:</strong> Prize money will be automatically added to winners' wallets when tournament results are published. Players can then withdraw their earnings.
                                 </div>
                             </div>
                             
